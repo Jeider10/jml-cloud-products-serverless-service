@@ -8,17 +8,25 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductoRepository extends JpaRepository<ProductoEntity, Long> {
-    Optional<ProductoEntity> findByCodigo(String codigo);
+    Optional<ProductoEntity> findByCodigo(Long codigo);
 
     List<ProductoEntity> findByNombre(String nombre);
 
+    List<ProductoEntity> findByNombreContainingIgnoreCase(String nombre);
+
     List<ProductoEntity> findByDescripcion(String descripcion);
+
+    List<ProductoEntity> findByDescripcionContainingIgnoreCase(String descripcion);
 
     List<ProductoEntity> findByCantidad(String cantidad);
 
     List<ProductoEntity> findByPrecio(String precio);
 
-    List<ProductoEntity> findByProveedor(String proveedor);
+    List<ProductoEntity> findByProveedorId(Long proveedorId);
+
+    List<ProductoEntity> findByProveedorName(String proveedorName);
+
+    List<ProductoEntity> findByProveedorNameContainingIgnoreCase(String proveedorName);
 
     List<ProductoEntity> findByFechaCreacion(LocalDateTime fechaCreacion);
 }

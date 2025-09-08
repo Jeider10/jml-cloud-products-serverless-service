@@ -1,44 +1,21 @@
-package com.cloud.jml.model;
+package com.cloud.jml.dto;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+@NoArgsConstructor // Constructor sin argumentos
+@AllArgsConstructor // Constructor con todos los argumentoss
+public class ProductoRequestDTO {
 
-@Entity
-@Table(name = "productos")
-public class ProductoEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
     private Long codigo;
-
-    @Column(nullable = false)
     private String nombre;
-
     private String descripcion;
     private String cantidad;
     private String precio;
     private Long proveedorId;
     private String proveedorName;
 
-    @Column(name = "fecha_creacion", nullable = false, updatable = false)
-    private LocalDateTime fechaCreacion;
-
-    @Column(name = "fecha_actualizacion")
-    private LocalDateTime fechaActualizacion;
-
     // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getCodigo() {
         return codigo;
     }
@@ -93,21 +70,5 @@ public class ProductoEntity {
 
     public void setProveedorName(String proveedorName) {
         this.proveedorName = proveedorName;
-    }
-
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
-    public LocalDateTime getFechaActualizacion() {
-        return fechaActualizacion;
-    }
-
-    public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
-        this.fechaActualizacion = fechaActualizacion;
     }
 }

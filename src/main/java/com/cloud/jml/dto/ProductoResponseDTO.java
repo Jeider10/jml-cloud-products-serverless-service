@@ -1,39 +1,30 @@
 package com.cloud.jml.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
-public class ProductoDTO {
+@NoArgsConstructor // Constructor sin argumentos
+@AllArgsConstructor // Constructor con todos los argumentos
+public class ProductoResponseDTO {
 
-    private String codigo;
+    private Long codigo;
     private String nombre;
     private String descripcion;
     private String cantidad;
     private String precio;
-    private String proveedor;
+    private Long proveedorId;
+    private String proveedorName;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
 
-    public ProductoDTO() {
-        // Constructor
-    }
-
-    public ProductoDTO(String codigo, String nombre, String descripcion, String cantidad, String precio, String proveedor, LocalDateTime fechaCreacion, LocalDateTime fechaActualizacion) {
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.cantidad = cantidad;
-        this.precio = precio;
-        this.proveedor = proveedor;
-        this.fechaCreacion = fechaCreacion;
-        this.fechaActualizacion = fechaActualizacion;
-    }
-
     // Getters y Setters
-    public String getCodigo() {
+    public Long getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(String codigo) {
+    public void setCodigo(Long codigo) {
         this.codigo = codigo;
     }
 
@@ -69,12 +60,20 @@ public class ProductoDTO {
         this.precio = precio;
     }
 
-    public String getProveedor() {
-        return proveedor;
+    public Long getProveedorId() {
+        return proveedorId;
     }
 
-    public void setProveedor(String proveedor) {
-        this.proveedor = proveedor;
+    public void setProveedorId(Long proveedorId) {
+        this.proveedorId = proveedorId;
+    }
+
+    public String getProveedorName() {
+        return proveedorName;
+    }
+
+    public void setProveedorName(String proveedorName) {
+        this.proveedorName = proveedorName;
     }
 
     public LocalDateTime getFechaCreacion() {

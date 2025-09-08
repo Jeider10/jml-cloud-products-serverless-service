@@ -49,7 +49,7 @@ public class SecurityConfig {
                 }))
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers(
-//                                "/proveedores/producto", // permitir registro de clientes sin auth
+//                                "/productos/register", // permitir registro de productos sin auth
                                         "/css/**",
                                         "/js/**",
                                         "/images/**"
