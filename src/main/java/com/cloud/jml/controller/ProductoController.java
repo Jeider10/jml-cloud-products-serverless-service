@@ -117,7 +117,7 @@ public class ProductoController {
     }
 
     @GetMapping("/cantidad")
-    public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorCantidad(@RequestParam("cantidad") String cantidad) {
+    public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorCantidad(@RequestParam("cantidad") Long cantidad) {
         log.info("📌 Iniciando petición para buscar Producto por cantidad: {}", cantidad);
 
         ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
@@ -141,7 +141,7 @@ public class ProductoController {
     }
 
     @GetMapping("/precio")
-    public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorPrecio(@RequestParam("precio") String precio) {
+    public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorPrecio(@RequestParam("precio") Long precio) {
         log.info("📌 Iniciando petición para buscar Producto por precio: {}", precio);
 
         ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();

@@ -12,8 +12,8 @@ public class ProductoResponseDTO {
     private Long codigo;
     private String nombre;
     private String descripcion;
-    private String cantidad;
-    private String precio;
+    private Long cantidad;
+    private Long precio;
     private Long proveedorId;
     private String proveedorName;
     private LocalDateTime fechaCreacion;
@@ -44,19 +44,19 @@ public class ProductoResponseDTO {
         this.descripcion = descripcion;
     }
 
-    public String getCantidad() {
+    public Long getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(String cantidad) {
+    public void setCantidad(Long cantidad) {
         this.cantidad = cantidad;
     }
 
-    public String getPrecio() {
+    public Long getPrecio() {
         return precio;
     }
 
-    public void setPrecio(String precio) {
+    public void setPrecio(Long precio) {
         this.precio = precio;
     }
 

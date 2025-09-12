@@ -18,9 +18,9 @@ public interface ProductoRepository extends JpaRepository<ProductoEntity, Long> 
 
     List<ProductoEntity> findByDescripcionContainingIgnoreCase(String descripcion);
 
-    List<ProductoEntity> findByCantidad(String cantidad);
+    List<ProductoEntity> findByCantidad(Long cantidad);
 
-    List<ProductoEntity> findByPrecio(String precio);
+    List<ProductoEntity> findByPrecio(Long precio);
 
     List<ProductoEntity> findByProveedorId(Long proveedorId);
 

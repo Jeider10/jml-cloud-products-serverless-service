@@ -19,9 +19,13 @@ public class ProductoEntity {
     private String nombre;
 
     private String descripcion;
-    private String cantidad;
-    private String precio;
+    private Long cantidad;
+    private Long precio;
+
+    @Column(nullable = false)
     private Long proveedorId;
+
+    @Column(nullable = false)
     private String proveedorName;
 
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
@@ -63,19 +67,19 @@ public class ProductoEntity {
         this.descripcion = descripcion;
     }
 
-    public String getCantidad() {
+    public Long getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(String cantidad) {
+    public void setCantidad(Long cantidad) {
         this.cantidad = cantidad;
     }
 
-    public String getPrecio() {
+    public Long getPrecio() {
         return precio;
     }
 
-    public void setPrecio(String precio) {
+    public void setPrecio(Long precio) {
         this.precio = precio;
     }
 
