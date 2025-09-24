@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -290,11 +289,11 @@ public class ProductoService {
 
         Optional<ProductoEntity> productoOptional = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
 
-        if(productoOptional.isPresent()){
+        if (productoOptional.isPresent()) {
             ProductoEntity productoEntity = productoOptional.get();
             productoRepository.delete(productoEntity);
             log.info("✅ Producto eliminado con codigo: {}", productoRequestDTO.getCodigo());
-        }else{
+        } else {
             log.warn("⚠️ No se encontró el Producto con codigo: {}", productoRequestDTO.getCodigo());
             throw new ProductoNoEncontradoException(productoRequestDTO.getCodigo());
         }

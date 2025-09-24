@@ -3,8 +3,6 @@ package com.cloud.jml.dto;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @NoArgsConstructor // Constructor sin argumentos
 @AllArgsConstructor // Constructor con todos los argumentos
 public class ProductoResponseDTO {
@@ -16,8 +14,8 @@ public class ProductoResponseDTO {
     private Long precio;
     private Long proveedorId;
     private String proveedorName;
-    private LocalDateTime fechaCreacion;
-    private LocalDateTime fechaActualizacion;
+    private String fechaCreacion;
+    private String fechaActualizacion;
 
     // Getters y Setters
     public Long getCodigo() {
@@ -76,19 +74,19 @@ public class ProductoResponseDTO {
         this.proveedorName = proveedorName;
     }
 
-    public LocalDateTime getFechaCreacion() {
+    public String getFechaCreacion() {
         return fechaCreacion;
     }
 
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+    public void setFechaCreacion(String fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public LocalDateTime getFechaActualizacion() {
+    public String getFechaActualizacion() {
         return fechaActualizacion;
     }
 
-    public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
+    public void setFechaActualizacion(String fechaActualizacion) {
         this.fechaActualizacion = fechaActualizacion;
     }
 }

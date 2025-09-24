@@ -9,11 +9,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Optional;
 
 @Slf4j
 @Component // 🔹 Anotación para indicar que es un componente de Spring
 public class ProductoUtils {
+
+    private static final DateTimeFormatter FORMATTER =
+            DateTimeFormatter.ofPattern("d/M/yyyy, h:mm:ss a", Locale.of("es", "CO"));
 
     private final ProductoRepository productoRepository;
 
@@ -44,5 +49,39 @@ public class ProductoUtils {
         productoEntity.setProveedorName(productoRequestDTO.getProveedorName());
 
         productoEntity.setFechaActualizacion(LocalDateTime.now());
+    }
+
+    public String formatearFecha(LocalDateTime fecha) {
+        String fechaFormateada = fecha.format(FORMATTER).toLowerCase();
+        log.info("📌 Fecha formateada originalmente: {}", fechaFormateada);
+
+        // Reemplazar y reasignar el valor "a. m." → "a.m." y "p. m." → "p.m."
+        fechaFormateada = fechaFormateada
+                .replace("a. m.", "a.m.")
+                .replace("p. m.", "p.m.");
+
+        log.info("📌 Fecha formateada final: {}", fechaFormateada);
+
+        return fechaFormateada;
+    }
+
+    public void asignarFechasFormateadas(ProductoEntity productoEntity, ProductoResponseDTO productoResponseDTO) {
+        if (productoEntity.getFechaCreacion() != null) {
+            String fechaCreacion = formatearFecha(productoEntity.getFechaCreacion());
+            log.info("📌 Fecha creación formateada: {}", fechaCreacion);
+
+            productoResponseDTO.setFechaCreacion(fechaCreacion);
+        } else {
+            productoResponseDTO.setFechaCreacion(null);
+        }
+
+        if (productoEntity.getFechaActualizacion() != null) {
+            String fechaActualizacion = formatearFecha(productoEntity.getFechaActualizacion());
+            log.info("📌 Fecha actualización formateada: {}", fechaActualizacion);
+
+            productoResponseDTO.setFechaActualizacion(fechaActualizacion);
+        } else {
+            productoResponseDTO.setFechaActualizacion(null);
+        }
     }
 }

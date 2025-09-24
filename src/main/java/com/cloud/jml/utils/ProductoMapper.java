@@ -12,8 +12,10 @@ import java.time.LocalDateTime;
 @Component // 🔹 Anotación para indicar que es un componente de Spring
 public class ProductoMapper {
 
-    public ProductoMapper() {
-        // Constructor
+    private final ProductoUtils productoUtils;
+
+    public ProductoMapper(ProductoUtils productoUtils) {
+        this.productoUtils = productoUtils;
     }
 
     // ------------------ 🔹 Métodos privados de Mapeos ------------------
@@ -49,8 +51,9 @@ public class ProductoMapper {
         productoResponseDTO.setPrecio(productoEntity.getPrecio());
         productoResponseDTO.setProveedorId(productoEntity.getProveedorId());
         productoResponseDTO.setProveedorName(productoEntity.getProveedorName());
-        productoResponseDTO.setFechaCreacion(productoEntity.getFechaCreacion());
-        productoResponseDTO.setFechaActualizacion(productoEntity.getFechaActualizacion());
+
+        // 🔹 Formatear fechas
+        productoUtils.asignarFechasFormateadas(productoEntity, productoResponseDTO);
 
         log.info("📌 Finalizando mapeo Entity a DTO para crear Producto");
 
