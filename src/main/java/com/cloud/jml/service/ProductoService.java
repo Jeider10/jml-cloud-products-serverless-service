@@ -299,6 +299,39 @@ public class ProductoService {
         }
     }
 
+    @Transactional
+    public ProductoResponseDTO restarStock(Long codigo, int cantidad) {
+        log.info("📦 Iniciando proceso para restar {} unidades al producto con código {}", cantidad, codigo);
+
+        Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigo(codigo);
+
+        if (optionalProducto.isEmpty()) {
+            log.warn("⚠️ Producto no encontrado con código en la base: {}", codigo);
+            throw new ProductoNoEncontradoException(codigo);
+        }
+
+        ProductoEntity producto = optionalProducto.get();
+
+        if (producto.getCantidad() < cantidad) {
+            log.warn("⚠️ Stock insuficiente. Disponible: {}, Solicitado: {} para producto {}",
+                    producto.getCantidad(), cantidad, codigo);
+            throw new IllegalArgumentException("Stock insuficiente");
+        }
+
+        // Restar stock
+        Long nuevoStock = producto.getCantidad() - cantidad;
+        producto.setCantidad(nuevoStock);
+
+        log.info("✅ Stock actualizado correctamente para producto {}. Nuevo stock: {}", codigo, nuevoStock);
+
+        ProductoEntity actualizado = productoRepository.save(producto);
+
+        log.info("📌 Producto {} guardado exitosamente con nuevo stock {}", codigo, actualizado.getCantidad());
+
+        return mapper.mapEntityToResponseDto(actualizado);
+    }
+
+
 //    @Transactional
 //    public List<ProductoResponseDTO> obtenerProductoPorFechaCreacion(ProductoRequestDTO productoRequestDTO) {
 //        return productoRepository.findByFechaCreacion(productoResponseDTO.getFechaCreacion())

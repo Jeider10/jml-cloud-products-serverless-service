@@ -246,4 +246,26 @@ public class ProductoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    @PutMapping("/{codigo}/restar-stock")
+    public ResponseEntity<ProductoResponseDTO> restarStock(
+            @PathVariable Long codigo,
+            @RequestParam int cantidad) {
+        log.info("📦 Restando {} unidades al producto con código {}", cantidad, codigo);
+
+        try {
+            ProductoResponseDTO response = productoService.restarStock(codigo, cantidad);
+            return ResponseEntity.ok(response);
+        } catch (ProductoNoEncontradoException ex) {
+            log.warn("⚠️ Producto no encontrado con código: {}", codigo, ex);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (IllegalArgumentException ex) {
+            log.warn("⚠️ Stock insuficiente para producto con código: {}", codigo, ex);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception ex) {
+            log.error("❌ Error al restar stock del producto: {}", ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }
