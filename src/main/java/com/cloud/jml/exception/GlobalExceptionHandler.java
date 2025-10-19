@@ -1,5 +1,7 @@
 package com.cloud.jml.exception;
 
+import com.cloud.jml.exception.producto.ProductoRuntimeException;
+import com.cloud.jml.exception.stock.StockRuntimeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,27 +14,44 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ProductoDuplicadoException.class)
-    public ResponseEntity<Map<String, Object>> handleClienteDuplicado(ProductoDuplicadoException ex) {
-        return buildErrorResponse(HttpStatus.CONFLICT, "Cliente duplicado", ex.getMessage());
+    // 📦 Errores de producto
+    @ExceptionHandler(ProductoRuntimeException.class)
+    public ResponseEntity<Map<String, Object>> handleProductoErrors(ProductoRuntimeException ex) {
+        return buildErrorResponse(
+                ex.getStatus(),
+                "📦 [PRODUCTO] Error en producto",
+                ex.getMessage()
+        );
     }
 
-    @ExceptionHandler(ProductoNoEncontradoException.class)
-    public ResponseEntity<Map<String, Object>> handleClienteNoEncontrado(ProductoNoEncontradoException ex) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, "Cliente no encontrado", ex.getMessage());
+    // 📦 Errores de stock
+    @ExceptionHandler(StockRuntimeException.class)
+    public ResponseEntity<Map<String, Object>> handleStockErrors(StockRuntimeException ex) {
+        return buildErrorResponse(
+                ex.getStatus(),
+                "📦 [STOCK] Error en stock",
+                ex.getMessage()
+        );
     }
 
+    // 🔥 Errores generales no controlados
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneral(Exception ex) {
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno", ex.getMessage());
+        return buildErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "🔥 [GENERAL] Error interno del servidor",
+                ex.getMessage()
+        );
     }
 
+    // 🧱 Método común de respuesta
     private ResponseEntity<Map<String, Object>> buildErrorResponse(HttpStatus status, String error, String message) {
         Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
         body.put("status", status.value());
         body.put("error", error);
         body.put("message", message);
-        body.put("timestamp", LocalDateTime.now());
+
         return ResponseEntity.status(status).body(body);
     }
 }

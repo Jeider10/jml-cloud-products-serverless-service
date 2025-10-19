@@ -12,16 +12,18 @@ import java.time.LocalDateTime;
 @Component // 🔹 Anotación para indicar que es un componente de Spring
 public class ProductoMapper {
 
-    private final ProductoUtils productoUtils;
+    private final ProductoFormatearFecha productoFormatearFecha;
 
-    public ProductoMapper(ProductoUtils productoUtils) {
-        this.productoUtils = productoUtils;
+    public ProductoMapper(ProductoFormatearFecha productoFormatearFecha) {
+        this.productoFormatearFecha = productoFormatearFecha;
+        log.info("🔥 ProductoMapper inicializado correctamente.");
     }
 
-    // ------------------ 🔹 Métodos privados de Mapeos ------------------
-
+    /**
+     * 📦 Convierte un DTO de solicitud de producto en una entidad lista para persistir.
+     */
     public ProductoEntity mapRequestDtoToEntity(ProductoRequestDTO productoRequestDTO) {
-        log.info("📌 Iniciando mapeo DTO a Entity para crear Producto");
+        log.info("📦 Iniciando mapeo DTO → Entity para producto: nombre={}", productoRequestDTO.getNombre());
 
         ProductoEntity productoEntity = new ProductoEntity();
 
@@ -34,13 +36,16 @@ public class ProductoMapper {
         productoEntity.setProveedorName(productoRequestDTO.getProveedorName());
         productoEntity.setFechaCreacion(LocalDateTime.now());
 
-        log.info("📌 Finalizando mapeo DTO a Entity para crear Producto");
+        log.info("✅ Mapeo completado DTO → Entity para producto: nombre={}", productoRequestDTO.getNombre());
 
         return productoEntity;
     }
 
+    /**
+     * 📦 Convierte una entidad de producto en un DTO de respuesta.
+     */
     public ProductoResponseDTO mapEntityToResponseDto(ProductoEntity productoEntity) {
-        log.info("📌 Iniciando mapeo Entity a DTO para crear Producto");
+        log.info("📦 Iniciando mapeo Entity → DTO para producto: nombre={}", productoEntity.getNombre());
 
         ProductoResponseDTO productoResponseDTO = new ProductoResponseDTO();
 
@@ -52,11 +57,26 @@ public class ProductoMapper {
         productoResponseDTO.setProveedorId(productoEntity.getProveedorId());
         productoResponseDTO.setProveedorName(productoEntity.getProveedorName());
 
-        // 🔹 Formatear fechas
-        productoUtils.asignarFechasFormateadas(productoEntity, productoResponseDTO);
+        // 🕓 Formateo de fechas
+        productoFormatearFecha.asignarFechasFormateadas(productoEntity, productoResponseDTO);
 
-        log.info("📌 Finalizando mapeo Entity a DTO para crear Producto");
+        log.info("✅ Mapeo completado Entity → DTO para producto: nombre={}", productoEntity.getNombre());
 
         return productoResponseDTO;
+    }
+
+    /**
+     * ✏️ Actualiza una entidad de producto existente con los datos del DTO.
+     */
+    public void actualizarDatosProductoExistente(ProductoRequestDTO productoRequestDTO, ProductoEntity productoEntity) {
+
+        productoEntity.setNombre(productoRequestDTO.getNombre());
+        productoEntity.setDescripcion(productoRequestDTO.getDescripcion());
+        productoEntity.setCantidad(productoRequestDTO.getCantidad());
+        productoEntity.setPrecio(productoRequestDTO.getPrecio());
+        productoEntity.setProveedorId(productoRequestDTO.getProveedorId());
+        productoEntity.setProveedorName(productoRequestDTO.getProveedorName());
+
+        productoEntity.setFechaActualizacion(LocalDateTime.now());
     }
 }

@@ -2,8 +2,9 @@ package com.cloud.jml.service;
 
 import com.cloud.jml.dto.ProductoRequestDTO;
 import com.cloud.jml.dto.ProductoResponseDTO;
-import com.cloud.jml.exception.ProductoDuplicadoException;
-import com.cloud.jml.exception.ProductoNoEncontradoException;
+import com.cloud.jml.exception.producto.ProductoDuplicadoException;
+import com.cloud.jml.exception.producto.ProductoNoEncontradoException;
+import com.cloud.jml.exception.stock.StockInsuficienteException;
 import com.cloud.jml.model.ProductoEntity;
 import com.cloud.jml.repository.ProductoRepository;
 import com.cloud.jml.utils.ProductoMapper;
@@ -31,306 +32,332 @@ public class ProductoService {
         log.info("🔥 ProductoService inicializado correctamente.");
     }
 
+    @Transactional(readOnly = true)
+    public List<ProductoResponseDTO> listarProductos() {
+        log.info("🔍 [CONSULTA] Recuperando todos los productos desde la base de datos");
+
+        List<ProductoEntity> productoEntity = productoRepository.findAll();
+
+        if (productoEntity.isEmpty()) {
+            log.warn("⚠️ [RESULTADO] No se encontraron productos registrados en la base de datos");
+            return List.of();
+        }
+
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs", productoEntity.size());
+
+        // convertir a stream
+        Stream<ProductoEntity> streamProductos = productoEntity.stream();
+
+        // mapear entidades a DTOs
+        Stream<ProductoResponseDTO> streamProductosDTO = streamProductos.map(mapper::mapEntityToResponseDto);
+
+        // recolectar en lista
+        List<ProductoResponseDTO> productosResponse = streamProductosDTO.toList();
+
+        log.info("✅ [FINALIZADO] Total de productos mapeados y retornados: {}", productosResponse.size());
+
+        return productosResponse;
+    }
+
     @Transactional
     public ProductoResponseDTO crearProducto(ProductoRequestDTO productoRequestDTO) {
-        log.info("📌 Inicio de creación de Producto: {}", productoRequestDTO.getNombre());
+        log.info("🔍 [CONSULTA] Inicio de creación de producto: {}", productoRequestDTO.getNombre());
 
-        // Verificar si ya existe por codigo
-        Optional<ProductoEntity> existente = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
-        if (existente.isPresent()) {
-            log.warn("⚠️ Producto duplicado: {}", productoRequestDTO.getCodigo());
+        Optional<ProductoEntity> byCodigo = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
+
+        if (byCodigo.isPresent()) {
+            log.warn("❌ [ERROR] Producto duplicado detectado: {}", productoRequestDTO.getCodigo());
             throw new ProductoDuplicadoException(productoRequestDTO.getCodigo());
         }
 
         // Mapeo de DTO a Entity
+        log.info("📦 [MAPEO] Transformando DTO a entidad de producto");
         ProductoEntity productoEntity = mapper.mapRequestDtoToEntity(productoRequestDTO);
+        log.info("📦 [MAPEO] Producto mapeado a entidad. Código: {}", productoEntity.getCodigo());
 
         // Guardamos en la base de datos
-        ProductoEntity guardado = productoRepository.save(productoEntity);
-        log.info("✅ Producto creado correctamente: {}", productoRequestDTO.getNombre());
+        ProductoEntity guardado = productoUtils.guardarProductoBD(productoEntity);
+        log.info("💾 [PERSISTENCIA] Producto guardado exitosamente. Código: {}", guardado.getCodigo());
 
-        // Convertimos de nuevo a DTO
+        log.info("📦 [MAPEO] Transformando entidad de producto a DTO. (crearProducto)");
         ProductoResponseDTO productoResponseDTO = mapper.mapEntityToResponseDto(guardado);
-        log.info("📌 Finaliza creación de Producto: {}", productoResponseDTO.getNombre());
+        log.info("📦 [MAPEO] Producto mapeado a DTO. Código: {}, nombre: {}, descripción: {}",
+                productoEntity.getCodigo(), productoEntity.getNombre(), productoEntity.getDescripcion());
+
+        log.info("✅ [FINALIZADO] Producto creado correctamente: {} con Código {}", productoResponseDTO.getNombre(), productoResponseDTO.getCodigo());
 
         return productoResponseDTO;
     }
 
     @Transactional(readOnly = true)
-    public List<ProductoResponseDTO> listarProductos() {
-        log.info("📌 Iniciando búsqueda de todos los Productos.");
+    public ProductoResponseDTO obtenerProductoPorCodigo(ProductoRequestDTO productoRequestDTO) {
+        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por código: {}", productoRequestDTO.getCodigo());
 
-        // Paso 1: Obtener entidades desde la BD
-        List<ProductoEntity> productoEntity = productoRepository.findAll();
+        Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
 
-        // Paso 2: Convertir a Stream
-        Stream<ProductoEntity> streamProductos = productoEntity.stream();
-
-        // Paso 3: Mapear cada entidad a DTO
-        Stream<ProductoResponseDTO> streamProductosDTO = streamProductos.map(mapper::mapEntityToResponseDto);
-
-        // Paso 4: Convertir a lista final
-        List<ProductoResponseDTO> productosResponse = streamProductosDTO.toList();
-
-        log.info("📌 Finaliza búsqueda de todos los Productos. Total encontrados: {}", productosResponse.size());
-
-        return productosResponse;
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<ProductoResponseDTO> obtenerProductoPorCodigo(Long codigo) {
-        log.info("📌 Iniciando búsqueda de Producto por código: {}", codigo);
-
-        Optional<ProductoEntity> productoEntity = productoRepository.findByCodigo(codigo);
-
-        if (productoEntity.isPresent()) {
-            Optional<ProductoResponseDTO> productoResponseDTO = productoEntity.map(mapper::mapEntityToResponseDto);
-            log.info("✅ Producto encontrado con código: {}", codigo);
-            return productoResponseDTO;
-        } else {
-            Optional<ProductoResponseDTO> productoResponseDTO = Optional.empty();
-            log.warn("⚠️ Producto no encontrado con código: {}", codigo);
-            return productoResponseDTO;
+        if (optionalProducto.isEmpty()) {
+            log.warn("❌ [RESULTADO] Producto no encontrado con código: {}", productoRequestDTO.getCodigo());
+            return null;
         }
+
+        ProductoEntity productoEntity = optionalProducto.get();
+        log.info("📦 [ENCONTRADO] Producto encontrado -> código: {}, nombre: {}, cantidad: {}",
+                productoEntity.getCodigo(), productoEntity.getNombre(), productoEntity.getCantidad());
+
+        log.info("📦 [MAPEO] Transformando entidad de producto a DTO. (obtenerProductoPorCodigo)");
+        ProductoResponseDTO productoResponseDTO = mapper.mapEntityToResponseDto(productoEntity);
+        log.info("📦 [MAPEO] Producto mapeado a DTO. Código: {}", productoResponseDTO.getCodigo());
+
+        log.info("✅ [FINALIZADO] Producto encontrado con código: {}", productoResponseDTO.getCodigo());
+
+        return productoResponseDTO;
     }
 
     @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorNombre(ProductoRequestDTO productoRequestDTO) {
-        log.info("📌 Iniciando búsqueda de Producto por nombre: {}", productoRequestDTO.getNombre());
+        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por nombre: {}", productoRequestDTO.getNombre());
 
-        // Paso 1: Buscar entidades por nombre
         List<ProductoEntity> productoEntity = productoRepository.findByNombreContainingIgnoreCase(productoRequestDTO.getNombre());
 
-        // Paso 2: Validar si está vacío
         if (productoEntity.isEmpty()) {
-            log.warn("⚠️ No se encontraron productos con el nombre: {}", productoRequestDTO.getNombre());
-            return List.of(); // Retorna lista vacía
+            log.warn("❌ [RESULTADO] No se encontraron productos con el nombre: {}", productoRequestDTO.getNombre());
+            return List.of();
         }
 
-        // Paso 3: Convertir a Stream
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (nombre: {})", productoEntity.size(), productoRequestDTO.getNombre());
+
+        // convertir a stream
         Stream<ProductoEntity> streamProductos = productoEntity.stream();
 
-        // Paso 4: Mapear cada entidad a DTO
+        // mapear entidades a DTOs
         Stream<ProductoResponseDTO> streamDto = streamProductos.map(mapper::mapEntityToResponseDto);
 
-        // Paso 5: Convertir a lista final
+        // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("📌 Finaliza búsqueda de Producto por nombre: {}. Total encontrados: {}",
-                productoRequestDTO.getNombre(), productosResponse.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con nombre '{}'. Total encontrados: {}", productoRequestDTO.getNombre(), productosResponse.size());
 
         return productosResponse;
     }
 
     @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorDescripcion(ProductoRequestDTO productoRequestDTO) {
-        log.info("📌 Iniciando búsqueda de Producto por descripcion: {}", productoRequestDTO.getDescripcion());
+        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por descripción: {}", productoRequestDTO.getDescripcion());
 
-        // Paso 1: Buscar entidades por nombre
         List<ProductoEntity> productoEntity = productoRepository.findByDescripcionContainingIgnoreCase(productoRequestDTO.getDescripcion());
 
-        // Paso 2: Validar si está vacío
         if (productoEntity.isEmpty()) {
-            log.warn("⚠️ No se encontraron productos con descripcion: {}", productoRequestDTO.getDescripcion());
-            return List.of(); // Retorna lista vacía
+            log.warn("❌ [RESULTADO] No se encontraron productos con descripción: {}", productoRequestDTO.getDescripcion());
+            return List.of();
         }
 
-        // Paso 3: Convertir a Stream
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (descripción: {})", productoEntity.size(), productoRequestDTO.getDescripcion());
+
+        // convertir a stream
         Stream<ProductoEntity> streamProductos = productoEntity.stream();
 
-        // Paso 4: Mapear cada entidad a DTO
+        // mapear entidades a DTOs
         Stream<ProductoResponseDTO> streamDto = streamProductos.map(mapper::mapEntityToResponseDto);
 
-        // Paso 5: Convertir a lista final
+        // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("📌 Finaliza búsqueda de Producto por descripcion: {}. Total encontrados: {}",
-                productoRequestDTO.getDescripcion(), productosResponse.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con descripción '{}'. Total encontrados: {}", productoRequestDTO.getDescripcion(), productoEntity.size());
 
         return productosResponse;
     }
 
     @Transactional
     public List<ProductoResponseDTO> obtenerProductoPorCantidad(ProductoRequestDTO productoRequestDTO) {
-        log.info("📌 Iniciando búsqueda de Producto por cantidad: {}", productoRequestDTO.getCantidad());
+        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por cantidad: {}", productoRequestDTO.getCantidad());
 
-        // Paso 1: Buscar entidades por nombre
         List<ProductoEntity> productoEntity = productoRepository.findByCantidad(productoRequestDTO.getCantidad());
 
-        // Paso 2: Validar si está vacío
         if (productoEntity.isEmpty()) {
-            log.warn("⚠️ No se encontraron productos con cantidad: {}", productoRequestDTO.getCantidad());
-            return List.of(); // Retorna lista vacía
+            log.warn("❌ [RESULTADO] No se encontraron productos con cantidad: {}", productoRequestDTO.getCantidad());
+            return List.of();
         }
 
-        // Paso 3: Convertir a Stream
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (cantidad: {})", productoEntity.size(), productoRequestDTO.getCantidad());
+
+        // convertir a stream
         Stream<ProductoEntity> streamProductos = productoEntity.stream();
 
-        // Paso 4: Mapear cada entidad a DTO
+        // mapear entidades a DTOs
         Stream<ProductoResponseDTO> streamDto = streamProductos.map(mapper::mapEntityToResponseDto);
 
-        // Paso 5: Convertir a lista final
+        // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("📌 Finaliza búsqueda de Producto por cantidad: {}. Total encontrados: {}",
-                productoRequestDTO.getCantidad(), productosResponse.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con cantidad '{}'. Total encontrados: {}", productoRequestDTO.getCantidad(), productoEntity.size());
 
         return productosResponse;
     }
 
     @Transactional
     public List<ProductoResponseDTO> obtenerProductoPorPrecio(ProductoRequestDTO productoRequestDTO) {
-        log.info("📌 Iniciando búsqueda de Producto por precio: {}", productoRequestDTO.getPrecio());
+        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por precio: {}", productoRequestDTO.getPrecio());
 
-        // Paso 1: Buscar entidades por nombre
         List<ProductoEntity> productoEntity = productoRepository.findByPrecio(productoRequestDTO.getPrecio());
 
-        // Paso 2: Validar si está vacío
         if (productoEntity.isEmpty()) {
-            log.warn("⚠️ No se encontraron productos con precio: {}", productoRequestDTO.getPrecio());
-            return List.of(); // Retorna lista vacía
+            log.warn("❌ [RESULTADO] No se encontraron productos con precio: {}", productoRequestDTO.getPrecio());
+            return List.of();
         }
 
-        // Paso 3: Convertir a Stream
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (precio: {})", productoEntity.size(), productoRequestDTO.getPrecio());
+
+        // convertir a stream
         Stream<ProductoEntity> streamProductos = productoEntity.stream();
 
-        // Paso 4: Mapear cada entidad a DTO
+        // mapear entidades a DTOs
         Stream<ProductoResponseDTO> streamDto = streamProductos.map(mapper::mapEntityToResponseDto);
 
-        // Paso 5: Convertir a lista final
+        // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("📌 Finaliza búsqueda de Producto por precio: {}. Total encontrados: {}",
-                productoRequestDTO.getPrecio(), productosResponse.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con precio '{}'. Total encontrados: {}", productoRequestDTO.getPrecio(), productoEntity.size());
 
         return productosResponse;
     }
 
     @Transactional
     public List<ProductoResponseDTO> obtenerProductoPorProveedorId(ProductoRequestDTO productoRequestDTO) {
-        log.info("📌 Iniciando búsqueda de Producto por proveedorId: {}", productoRequestDTO.getProveedorId());
+        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por proveedorId: {}", productoRequestDTO.getProveedorId());
 
-        // Paso 1: Buscar entidades por nombre
         List<ProductoEntity> productoEntity = productoRepository.findByProveedorId(productoRequestDTO.getProveedorId());
 
-        // Paso 2: Validar si está vacío
         if (productoEntity.isEmpty()) {
-            log.warn("⚠️ No se encontraron productos con proveedorId: {}", productoRequestDTO.getProveedorId());
-            return List.of(); // Retorna lista vacía
+            log.warn("❌ [RESULTADO] No se encontraron productos con proveedorId: {}", productoRequestDTO.getProveedorId());
+            return List.of();
         }
 
-        // Paso 3: Convertir a Stream
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (proveedorId: {})", productoEntity.size(), productoRequestDTO.getProveedorId());
+
+        // convertir a stream
         Stream<ProductoEntity> streamProductos = productoEntity.stream();
 
-        // Paso 4: Mapear cada entidad a DTO
+        // mapear entidades a DTOs
         Stream<ProductoResponseDTO> streamDto = streamProductos.map(mapper::mapEntityToResponseDto);
 
-        // Paso 5: Convertir a lista final
+        // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("📌 Finaliza búsqueda de Producto por proveedorId: {}. Total encontrados: {}",
-                productoRequestDTO.getProveedorId(), productosResponse.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con proveedorId '{}'. Total encontrados: {}", productoRequestDTO.getProveedorId(), productoEntity.size());
 
         return productosResponse;
     }
 
     @Transactional
     public List<ProductoResponseDTO> obtenerProductoPorProveedorName(ProductoRequestDTO productoRequestDTO) {
-        log.info("📌 Iniciando búsqueda de Producto por proveedorName: {}", productoRequestDTO.getProveedorName());
+        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por proveedorName: {}", productoRequestDTO.getProveedorName());
 
-        // Paso 1: Buscar entidades por nombre
         List<ProductoEntity> productoEntity = productoRepository.findByProveedorNameContainingIgnoreCase(productoRequestDTO.getProveedorName());
 
-        // Paso 2: Validar si está vacío
         if (productoEntity.isEmpty()) {
-            log.warn("⚠️ No se encontraron productos con proveedorName: {}", productoRequestDTO.getProveedorName());
-            return List.of(); // Retorna lista vacía
+            log.warn("❌ [RESULTADO] No se encontraron productos con proveedorName: {}", productoRequestDTO.getProveedorName());
+            return List.of();
         }
 
-        // Paso 3: Convertir a Stream
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (proveedorName: {})", productoEntity.size(), productoRequestDTO.getProveedorName());
+
+        // convertir a stream
         Stream<ProductoEntity> streamProductos = productoEntity.stream();
 
-        // Paso 4: Mapear cada entidad a DTO
+        // mapear entidades a DTOs
         Stream<ProductoResponseDTO> streamDto = streamProductos.map(mapper::mapEntityToResponseDto);
 
-        // Paso 5: Convertir a lista final
+        // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("📌 Finaliza búsqueda de Producto por proveedorName: {}. Total encontrados: {}",
-                productoRequestDTO.getProveedorName(), productosResponse.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con proveedorName '{}'. Total encontrados: {}", productoRequestDTO.getProveedorName(), productoEntity.size());
 
         return productosResponse;
     }
 
     @Transactional
     public ProductoResponseDTO actualizarProducto(ProductoRequestDTO productoRequestDTO) {
-        log.info("📌 Iniciando actualización de Producto con codigo: {}", productoRequestDTO.getCodigo());
+        log.info("🔍 [CONSULTA] Inicio de actualización de producto con código: {}", productoRequestDTO.getCodigo());
 
         // Paso 1: Validar existencia
         ProductoEntity productoEntity = productoUtils.validarExistenciaProducto(productoRequestDTO);
 
         // Paso 2: Actualizar datos
-        productoUtils.actualizarDatosProducto(productoRequestDTO, productoEntity);
+        mapper.actualizarDatosProductoExistente(productoRequestDTO, productoEntity);
 
         // Paso 3: Guardar cambios en la BD
-        ProductoEntity actualizado = productoRepository.save(productoEntity);
-        log.info("✅ Producto actualizado con código: {}", productoRequestDTO.getNombre());
+        ProductoEntity actualizado = productoUtils.guardarProductoBD(productoEntity);
+        log.info("💾 [PERSISTENCIA] Producto actualizado con código: {}", actualizado.getCodigo());
 
         // Paso 4: Mapear a DTO
+        log.info("📦 [MAPEO] Transformando entidad de producto a DTO. (actualizarProducto)");
         ProductoResponseDTO productoResponseDTO = mapper.mapEntityToResponseDto(actualizado);
-        log.info("📌 Finaliza actualización de Producto: {} con codigo: {}", productoResponseDTO.getNombre(), productoResponseDTO.getCodigo());
+        log.info("📦 [MAPEO] Producto mapeado a DTO. código: {}, nombres: {}",
+                productoEntity.getCodigo(), productoEntity.getNombre());
+
+        log.info("✅ [FINALIZADO] Actualización de producto completada: {} con código: {}", productoResponseDTO.getNombre(), productoResponseDTO.getCodigo());
 
         return productoResponseDTO;
     }
 
     @Transactional
     public void eliminarProducto(ProductoRequestDTO productoRequestDTO) {
-        log.info("📌 Iniciando eliminación de Producto con codigo: {}", productoRequestDTO.getCodigo());
+        log.info("🔍 [CONSULTA] Inicio eliminación de producto con código: {}", productoRequestDTO.getCodigo());
 
         Optional<ProductoEntity> productoOptional = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
 
         if (productoOptional.isPresent()) {
             ProductoEntity productoEntity = productoOptional.get();
-            productoRepository.delete(productoEntity);
-            log.info("✅ Producto eliminado con codigo: {}", productoRequestDTO.getCodigo());
+            log.info("📦 [ENCONTRADO] Producto localizado -> {} con código: {}", productoEntity.getNombre(), productoEntity.getCodigo());
+
+            productoUtils.eliminarProductoBD(productoEntity);
+            log.info("🗑️ [ELIMINADO] Producto eliminado correctamente -> {} con código: {}", productoEntity.getNombre(), productoEntity.getCodigo());
         } else {
-            log.warn("⚠️ No se encontró el Producto con codigo: {}", productoRequestDTO.getCodigo());
+            log.warn("❌ [NO ENCONTRADO] Producto no encontrado con código: {}", productoRequestDTO.getCodigo());
             throw new ProductoNoEncontradoException(productoRequestDTO.getCodigo());
         }
     }
 
     @Transactional
     public ProductoResponseDTO restarStock(Long codigo, int cantidad) {
-        log.info("📦 Iniciando proceso para restar {} unidades al producto con código {}", cantidad, codigo);
+        log.info("📦 [CONSULTA] Iniciando proceso para restar {} unidades al producto con código {}", cantidad, codigo);
 
         Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigo(codigo);
 
         if (optionalProducto.isEmpty()) {
-            log.warn("⚠️ Producto no encontrado con código en la base: {}", codigo);
+            log.warn("❌ [NO ENCONTRADO] Producto no encontrado con código {} en la base.", codigo);
             throw new ProductoNoEncontradoException(codigo);
         }
 
-        ProductoEntity producto = optionalProducto.get();
+        ProductoEntity productoEntity = optionalProducto.get();
+        log.info("📦 [ENCONTRADO] Producto encontrado -> {} con código: {}", productoEntity.getNombre(), productoEntity.getCodigo());
 
-        if (producto.getCantidad() < cantidad) {
-            log.warn("⚠️ Stock insuficiente. Disponible: {}, Solicitado: {} para producto {}",
-                    producto.getCantidad(), cantidad, codigo);
-            throw new IllegalArgumentException("Stock insuficiente");
+        if (productoEntity.getCantidad() < cantidad) {
+            log.warn("📦 [STOCK] Stock insuficiente. Disponible: {}, Solicitado: {} para producto {}",
+                    productoEntity.getCantidad(), cantidad, codigo);
+            throw new StockInsuficienteException(cantidad);
         }
 
         // Restar stock
-        Long nuevoStock = producto.getCantidad() - cantidad;
-        producto.setCantidad(nuevoStock);
+        long nuevoStock = productoEntity.getCantidad() - cantidad;
+        productoEntity.setCantidad(nuevoStock);
 
-        log.info("✅ Stock actualizado correctamente para producto {}. Nuevo stock: {}", codigo, nuevoStock);
+        log.info("📦 [STOCK] Stock actualizado correctamente para producto con código {}. Nuevo stock: {}", codigo, nuevoStock);
 
-        ProductoEntity actualizado = productoRepository.save(producto);
+        ProductoEntity actualizado = productoUtils.guardarProductoBD(productoEntity);
 
-        log.info("📌 Producto {} guardado exitosamente con nuevo stock {}", codigo, actualizado.getCantidad());
+        log.info("✅ [FINALIZADO] Producto con código {} guardado exitosamente con nuevo stock {}", codigo, actualizado.getCantidad());
 
-        return mapper.mapEntityToResponseDto(actualizado);
+        log.info("📦 [MAPEO] Transformando entidad de producto a DTO. (restarStock)");
+        ProductoResponseDTO productoResponseDTO = mapper.mapEntityToResponseDto(actualizado);
+        log.info("📦 [MAPEO] Producto mapeado a DTO. código: {}, cantidad: {}",
+                productoEntity.getCodigo(), productoEntity.getCantidad());
+
+        log.info("✅ [FINALIZADO] Actualización de producto completada con código: {} y cantidad: {}",
+                productoResponseDTO.getCodigo(), productoResponseDTO.getCantidad());
+
+        return productoResponseDTO;
     }
-
 
 //    @Transactional
 //    public List<ProductoResponseDTO> obtenerProductoPorFechaCreacion(ProductoRequestDTO productoRequestDTO) {
