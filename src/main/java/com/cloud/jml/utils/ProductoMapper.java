@@ -23,7 +23,7 @@ public class ProductoMapper {
      * 📦 Convierte un DTO de solicitud de producto en una entidad lista para persistir.
      */
     public ProductoEntity mapRequestDtoToEntity(ProductoRequestDTO productoRequestDTO) {
-        log.info("📦 Iniciando mapeo DTO → Entity para producto: nombre={}", productoRequestDTO.getNombre());
+        log.info("📦 [MAPEO] Iniciando mapeo DTO → Entity para producto: nombre={}", productoRequestDTO.getNombre());
 
         ProductoEntity productoEntity = new ProductoEntity();
 
@@ -36,7 +36,7 @@ public class ProductoMapper {
         productoEntity.setProveedorName(productoRequestDTO.getProveedorName());
         productoEntity.setFechaCreacion(LocalDateTime.now());
 
-        log.info("✅ Mapeo completado DTO → Entity para producto: nombre={}", productoRequestDTO.getNombre());
+        log.info("✅ [MAPEO] Mapeo completado DTO → Entity para producto: nombre={}", productoRequestDTO.getNombre());
 
         return productoEntity;
     }
@@ -45,7 +45,7 @@ public class ProductoMapper {
      * 📦 Convierte una entidad de producto en un DTO de respuesta.
      */
     public ProductoResponseDTO mapEntityToResponseDto(ProductoEntity productoEntity) {
-        log.info("📦 Iniciando mapeo Entity → DTO para producto: nombre={}", productoEntity.getNombre());
+        log.info("📦 [MAPEO] Iniciando mapeo Entity → DTO para producto: nombre={}", productoEntity.getNombre());
 
         ProductoResponseDTO productoResponseDTO = new ProductoResponseDTO();
 
@@ -60,7 +60,7 @@ public class ProductoMapper {
         // 🕓 Formateo de fechas
         productoFormatearFecha.asignarFechasFormateadas(productoEntity, productoResponseDTO);
 
-        log.info("✅ Mapeo completado Entity → DTO para producto: nombre={}", productoEntity.getNombre());
+        log.info("✅ [MAPEO] Mapeo completado Entity → DTO para producto: nombre={}", productoEntity.getNombre());
 
         return productoResponseDTO;
     }
@@ -69,6 +69,7 @@ public class ProductoMapper {
      * ✏️ Actualiza una entidad de producto existente con los datos del DTO.
      */
     public void actualizarDatosProductoExistente(ProductoRequestDTO productoRequestDTO, ProductoEntity productoEntity) {
+        log.info("📦 [ACTUALIZACIÓN] Iniciando actualización de datos para producto: nombre={}", productoRequestDTO.getNombre());
 
         productoEntity.setNombre(productoRequestDTO.getNombre());
         productoEntity.setDescripcion(productoRequestDTO.getDescripcion());
@@ -78,5 +79,7 @@ public class ProductoMapper {
         productoEntity.setProveedorName(productoRequestDTO.getProveedorName());
 
         productoEntity.setFechaActualizacion(LocalDateTime.now());
+
+        log.info("✅ [ACTUALIZACIÓN] Datos actualizados para producto: nombre={}", productoRequestDTO.getNombre());
     }
 }

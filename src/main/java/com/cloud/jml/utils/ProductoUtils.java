@@ -69,15 +69,15 @@ public class ProductoUtils {
      * 🔍 Valida la existencia de un cliente en BD.
      */
     public ProductoEntity validarExistenciaProducto(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 Validando existencia de producto: código={}", productoRequestDTO.getCodigo());
+        log.info("🔍 [SOLICITUD] Validando existencia de producto: código={}", productoRequestDTO.getCodigo());
         Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
 
         if (optionalProducto.isPresent()) {
             ProductoEntity productoEntity = optionalProducto.get();
-            log.info("✅ Producto encontrado: código={}", productoEntity.getCodigo());
+            log.info("✅ [FINALIZADO] Producto encontrado: código={}", productoEntity.getCodigo());
             return productoEntity;
         } else {
-            log.warn("⚠️ Producto no encontrado: código={}", productoRequestDTO.getCodigo());
+            log.warn("⚠️ [RESULTADO] Producto no encontrado: código={}", productoRequestDTO.getCodigo());
             throw new ProductoNoEncontradoException(productoRequestDTO.getCodigo());
         }
     }

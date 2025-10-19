@@ -63,28 +63,26 @@ public class ProductoService {
     public ProductoResponseDTO crearProducto(ProductoRequestDTO productoRequestDTO) {
         log.info("🔍 [CONSULTA] Inicio de creación de producto: {}", productoRequestDTO.getNombre());
 
-        Optional<ProductoEntity> byCodigo = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
+        Optional<ProductoEntity> productoExistente = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
 
-        if (byCodigo.isPresent()) {
+        if (productoExistente.isPresent()) {
             log.warn("❌ [ERROR] Producto duplicado detectado: {}", productoRequestDTO.getCodigo());
             throw new ProductoDuplicadoException(productoRequestDTO.getCodigo());
         }
 
-        // Mapeo de DTO a Entity
         log.info("📦 [MAPEO] Transformando DTO a entidad de producto");
         ProductoEntity productoEntity = mapper.mapRequestDtoToEntity(productoRequestDTO);
-        log.info("📦 [MAPEO] Producto mapeado a entidad. Código: {}", productoEntity.getCodigo());
+        log.info("📦 [MAPEO] Producto: {} mapeado a entidad con código: {}", productoEntity.getNombre(), productoEntity.getCodigo());
 
-        // Guardamos en la base de datos
-        ProductoEntity guardado = productoUtils.guardarProductoBD(productoEntity);
-        log.info("💾 [PERSISTENCIA] Producto guardado exitosamente. Código: {}", guardado.getCodigo());
+        ProductoEntity guardarProducto = productoUtils.guardarProductoBD(productoEntity);
+        log.info("💾 [PERSISTENCIA] Producto: {} guardado exitosamente con código: {}", guardarProducto.getNombre(), guardarProducto.getCodigo());
 
         log.info("📦 [MAPEO] Transformando entidad de producto a DTO. (crearProducto)");
-        ProductoResponseDTO productoResponseDTO = mapper.mapEntityToResponseDto(guardado);
-        log.info("📦 [MAPEO] Producto mapeado a DTO. Código: {}, nombre: {}, descripción: {}",
-                productoEntity.getCodigo(), productoEntity.getNombre(), productoEntity.getDescripcion());
+        ProductoResponseDTO productoResponseDTO = mapper.mapEntityToResponseDto(guardarProducto);
+        log.info("📦 [MAPEO] Producto mapeado a DTO. código: {}, nombre: {}, descripción: {}",
+                productoResponseDTO.getCodigo(), productoResponseDTO.getNombre(), productoResponseDTO.getDescripcion());
 
-        log.info("✅ [FINALIZADO] Producto creado correctamente: {} con Código {}", productoResponseDTO.getNombre(), productoResponseDTO.getCodigo());
+        log.info("✅ [FINALIZADO] Producto creado correctamente: {} con código {}", productoResponseDTO.getNombre(), productoResponseDTO.getCodigo());
 
         return productoResponseDTO;
     }
@@ -106,7 +104,7 @@ public class ProductoService {
 
         log.info("📦 [MAPEO] Transformando entidad de producto a DTO. (obtenerProductoPorCodigo)");
         ProductoResponseDTO productoResponseDTO = mapper.mapEntityToResponseDto(productoEntity);
-        log.info("📦 [MAPEO] Producto mapeado a DTO. Código: {}", productoResponseDTO.getCodigo());
+        log.info("📦 [MAPEO] Producto mapeado a DTO. código: {}", productoResponseDTO.getCodigo());
 
         log.info("✅ [FINALIZADO] Producto encontrado con código: {}", productoResponseDTO.getCodigo());
 
@@ -135,7 +133,7 @@ public class ProductoService {
         // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("✅ [FINALIZADO] Productos encontrados con nombre '{}'. Total encontrados: {}", productoRequestDTO.getNombre(), productosResponse.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con nombre: {}. Total encontrados: {}", productoRequestDTO.getNombre(), productosResponse.size());
 
         return productosResponse;
     }
@@ -162,7 +160,7 @@ public class ProductoService {
         // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("✅ [FINALIZADO] Productos encontrados con descripción '{}'. Total encontrados: {}", productoRequestDTO.getDescripcion(), productoEntity.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con descripción: {}. Total encontrados: {}", productoRequestDTO.getDescripcion(), productoEntity.size());
 
         return productosResponse;
     }
@@ -189,7 +187,7 @@ public class ProductoService {
         // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("✅ [FINALIZADO] Productos encontrados con cantidad '{}'. Total encontrados: {}", productoRequestDTO.getCantidad(), productoEntity.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con cantidad: {}. Total encontrados: {}", productoRequestDTO.getCantidad(), productoEntity.size());
 
         return productosResponse;
     }
@@ -216,7 +214,7 @@ public class ProductoService {
         // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("✅ [FINALIZADO] Productos encontrados con precio '{}'. Total encontrados: {}", productoRequestDTO.getPrecio(), productoEntity.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con precio: {}. Total encontrados: {}", productoRequestDTO.getPrecio(), productoEntity.size());
 
         return productosResponse;
     }
@@ -243,7 +241,7 @@ public class ProductoService {
         // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("✅ [FINALIZADO] Productos encontrados con proveedorId '{}'. Total encontrados: {}", productoRequestDTO.getProveedorId(), productoEntity.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con proveedorId: {}. Total encontrados: {}", productoRequestDTO.getProveedorId(), productoEntity.size());
 
         return productosResponse;
     }
@@ -270,7 +268,7 @@ public class ProductoService {
         // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("✅ [FINALIZADO] Productos encontrados con proveedorName '{}'. Total encontrados: {}", productoRequestDTO.getProveedorName(), productoEntity.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con proveedorName: {}. Total encontrados: {}", productoRequestDTO.getProveedorName(), productoEntity.size());
 
         return productosResponse;
     }
@@ -287,7 +285,7 @@ public class ProductoService {
 
         // Paso 3: Guardar cambios en la BD
         ProductoEntity actualizado = productoUtils.guardarProductoBD(productoEntity);
-        log.info("💾 [PERSISTENCIA] Producto actualizado con código: {}", actualizado.getCodigo());
+        log.info("💾 [PERSISTENCIA] Producto actualizado: {} con código: {}", actualizado.getNombre(), actualizado.getCodigo());
 
         // Paso 4: Mapear a DTO
         log.info("📦 [MAPEO] Transformando entidad de producto a DTO. (actualizarProducto)");
@@ -302,12 +300,12 @@ public class ProductoService {
 
     @Transactional
     public void eliminarProducto(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Inicio eliminación de producto con código: {}", productoRequestDTO.getCodigo());
+        log.info("🔍 [CONSULTA] Inicio de eliminación de producto con código: {}", productoRequestDTO.getCodigo());
 
-        Optional<ProductoEntity> productoOptional = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
+        Optional<ProductoEntity> productoExistente = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
 
-        if (productoOptional.isPresent()) {
-            ProductoEntity productoEntity = productoOptional.get();
+        if (productoExistente.isPresent()) {
+            ProductoEntity productoEntity = productoExistente.get();
             log.info("📦 [ENCONTRADO] Producto localizado -> {} con código: {}", productoEntity.getNombre(), productoEntity.getCodigo());
 
             productoUtils.eliminarProductoBD(productoEntity);
