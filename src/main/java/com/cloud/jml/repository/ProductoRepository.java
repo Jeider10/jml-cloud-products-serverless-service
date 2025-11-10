@@ -27,6 +27,4 @@ public interface ProductoRepository extends JpaRepository<ProductoEntity, Long> 
     List<ProductoEntity> findByProveedorName(String proveedorName);
 
     List<ProductoEntity> findByProveedorNameContainingIgnoreCase(String proveedorName);
-
-    List<ProductoEntity> findByFechaCreacion(LocalDateTime fechaCreacion);
 }

@@ -1,4 +1,4 @@
-package com.cloud.jml.utils;
+package com.cloud.jml.utils.producto;
 
 import com.cloud.jml.dto.ProductoRequestDTO;
 import com.cloud.jml.exception.producto.ProductoNoEncontradoException;
@@ -23,9 +23,20 @@ public class ProductoUtils {
         log.info("🔥 ProductoUtils inicializado correctamente.");
     }
 
-    /**
-     * 💾 Guarda la orden en BD con manejo de excepciones.
-     */
+    public ProductoEntity validarExistenciaProducto(ProductoRequestDTO productoRequestDTO) {
+        log.info("🔍 [SOLICITUD] Validando existencia de producto: código={}", productoRequestDTO.getCodigo());
+        Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
+
+        if (optionalProducto.isPresent()) {
+            ProductoEntity productoEntity = optionalProducto.get();
+            log.info("✅ [FINALIZADO] Producto encontrado: código={}", productoEntity.getCodigo());
+            return productoEntity;
+        } else {
+            log.warn("⚠️ [RESULTADO] Producto no encontrado: código={}", productoRequestDTO.getCodigo());
+            throw new ProductoNoEncontradoException(productoRequestDTO.getCodigo());
+        }
+    }
+
     public ProductoEntity guardarProductoBD(ProductoEntity productoEntity) {
         try {
             return productoRepository.save(productoEntity);
@@ -44,9 +55,6 @@ public class ProductoUtils {
         }
     }
 
-    /**
-     * 🗑️ Elimina la orden de BD con manejo de excepciones.
-     */
     public void eliminarProductoBD(ProductoEntity productoEntity) {
         try {
             productoRepository.delete(productoEntity);
@@ -62,23 +70,6 @@ public class ProductoUtils {
         } catch (Exception e) {
             log.error("🚨 Error inesperado al eliminar el producto: {}", e.getMessage(), e);
             throw new ProductoPersistenceException("Error inesperado al eliminar el producto", e);
-        }
-    }
-
-    /**
-     * 🔍 Valida la existencia de un cliente en BD.
-     */
-    public ProductoEntity validarExistenciaProducto(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [SOLICITUD] Validando existencia de producto: código={}", productoRequestDTO.getCodigo());
-        Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
-
-        if (optionalProducto.isPresent()) {
-            ProductoEntity productoEntity = optionalProducto.get();
-            log.info("✅ [FINALIZADO] Producto encontrado: código={}", productoEntity.getCodigo());
-            return productoEntity;
-        } else {
-            log.warn("⚠️ [RESULTADO] Producto no encontrado: código={}", productoRequestDTO.getCodigo());
-            throw new ProductoNoEncontradoException(productoRequestDTO.getCodigo());
         }
     }
 }

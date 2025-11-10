@@ -12,7 +12,6 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/productos")
-@CrossOrigin(origins = "http://localhost:8080")
 public class ProductoController {
 
     private final ProductoService productoService;
@@ -53,7 +52,12 @@ public class ProductoController {
 
         ProductoResponseDTO productoCodigo = productoService.obtenerProductoPorCodigo(productoRequestDTO);
 
-        log.info("📤 [RESPUESTA] Producto encontrado con código: {}", codigo);
+        if (productoCodigo == null) {
+            log.warn("📤 [RESPUESTA] Producto no encontrado con código: {}", codigo);
+            return ResponseEntity.ok().body(null);
+        }
+
+        log.info("📤 [RESPUESTA] Producto encontrado con código: {}", productoCodigo.getCodigo());
 
         return ResponseEntity.ok(productoCodigo);
     }
@@ -171,11 +175,12 @@ public class ProductoController {
     public ResponseEntity<ProductoResponseDTO> restarStock(
             @PathVariable Long codigo,
             @RequestParam int cantidad) {
-        log.info("📦 [STOCK] Restando {} unidades al producto con código: {}", cantidad, codigo);
+
+        log.info("📤 [RESPUESTA] [📦 STOCK] Restando {} unidades al producto con código: {}", cantidad, codigo);
 
         ProductoResponseDTO productoResponseDTO = productoService.restarStock(codigo, cantidad);
 
-        log.info("✅ [STOCK] Stock actualizado correctamente para el producto con código: {}", codigo);
+        log.info("📤 [RESPUESTA] [📦 STOCK] Stock actualizado correctamente para el producto con código: {}", productoResponseDTO.getCodigo());
 
         return ResponseEntity.ok(productoResponseDTO);
     }

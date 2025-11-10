@@ -7,8 +7,8 @@ import com.cloud.jml.exception.producto.ProductoNoEncontradoException;
 import com.cloud.jml.exception.stock.StockInsuficienteException;
 import com.cloud.jml.model.ProductoEntity;
 import com.cloud.jml.repository.ProductoRepository;
-import com.cloud.jml.utils.ProductoMapper;
-import com.cloud.jml.utils.ProductoUtils;
+import com.cloud.jml.utils.producto.ProductoMapper;
+import com.cloud.jml.utils.producto.ProductoUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -356,13 +356,4 @@ public class ProductoService {
 
         return productoResponseDTO;
     }
-
-//    @Transactional
-//    public List<ProductoResponseDTO> obtenerProductoPorFechaCreacion(ProductoRequestDTO productoRequestDTO) {
-//        return productoRepository.findByFechaCreacion(productoResponseDTO.getFechaCreacion())
-//                .stream()
-//                .map(this::mapEntityToDto)
-//                .collect(Collectors.toList());
-//    }
-//
 }

@@ -1,4 +1,4 @@
-package com.cloud.jml.utils;
+package com.cloud.jml.utils.producto;
 
 import com.cloud.jml.dto.ProductoRequestDTO;
 import com.cloud.jml.dto.ProductoResponseDTO;
@@ -19,9 +19,6 @@ public class ProductoMapper {
         log.info("🔥 ProductoMapper inicializado correctamente.");
     }
 
-    /**
-     * 📦 Convierte un DTO de solicitud de producto en una entidad lista para persistir.
-     */
     public ProductoEntity mapRequestDtoToEntity(ProductoRequestDTO productoRequestDTO) {
         log.info("📦 [MAPEO] Iniciando mapeo DTO → Entity para producto: nombre={}", productoRequestDTO.getNombre());
 
@@ -41,9 +38,6 @@ public class ProductoMapper {
         return productoEntity;
     }
 
-    /**
-     * 📦 Convierte una entidad de producto en un DTO de respuesta.
-     */
     public ProductoResponseDTO mapEntityToResponseDto(ProductoEntity productoEntity) {
         log.info("📦 [MAPEO] Iniciando mapeo Entity → DTO para producto: nombre={}", productoEntity.getNombre());
 
@@ -65,9 +59,6 @@ public class ProductoMapper {
         return productoResponseDTO;
     }
 
-    /**
-     * ✏️ Actualiza una entidad de producto existente con los datos del DTO.
-     */
     public void actualizarDatosProductoExistente(ProductoRequestDTO productoRequestDTO, ProductoEntity productoEntity) {
         log.info("📦 [ACTUALIZACIÓN] Iniciando actualización de datos para producto: nombre={}", productoRequestDTO.getNombre());
 
