@@ -19,7 +19,10 @@ public class ProductoEntity {
     @Column(nullable = false)
     private String nombre;
 
+    private String referencia;
     private String descripcion;
+    private String marca;
+    private String unidadMedida;
     private Long cantidad;
     private Long precio;
 

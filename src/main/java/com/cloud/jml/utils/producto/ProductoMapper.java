@@ -26,7 +26,10 @@ public class ProductoMapper {
 
         productoEntity.setCodigo(productoRequestDTO.getCodigo());
         productoEntity.setNombre(productoRequestDTO.getNombre());
+        productoEntity.setReferencia(productoRequestDTO.getReferencia());
         productoEntity.setDescripcion(productoRequestDTO.getDescripcion());
+        productoEntity.setMarca(productoRequestDTO.getMarca());
+        productoEntity.setUnidadMedida(productoRequestDTO.getUnidadMedida());
         productoEntity.setCantidad(productoRequestDTO.getCantidad());
         productoEntity.setPrecio(productoRequestDTO.getPrecio());
         productoEntity.setProveedorId(productoRequestDTO.getProveedorId());
@@ -45,7 +48,10 @@ public class ProductoMapper {
 
         productoResponseDTO.setCodigo(productoEntity.getCodigo());
         productoResponseDTO.setNombre(productoEntity.getNombre());
+        productoResponseDTO.setReferencia(productoEntity.getReferencia());
         productoResponseDTO.setDescripcion(productoEntity.getDescripcion());
+        productoResponseDTO.setMarca(productoEntity.getMarca());
+        productoResponseDTO.setUnidadMedida(productoEntity.getUnidadMedida());
         productoResponseDTO.setCantidad(productoEntity.getCantidad());
         productoResponseDTO.setPrecio(productoEntity.getPrecio());
         productoResponseDTO.setProveedorId(productoEntity.getProveedorId());
@@ -63,7 +69,10 @@ public class ProductoMapper {
         log.info("📦 [ACTUALIZACIÓN] Iniciando actualización de datos para producto: nombre={}", productoRequestDTO.getNombre());
 
         productoEntity.setNombre(productoRequestDTO.getNombre());
+        productoEntity.setReferencia(productoRequestDTO.getReferencia());
         productoEntity.setDescripcion(productoRequestDTO.getDescripcion());
+        productoEntity.setMarca(productoRequestDTO.getMarca());
+        productoEntity.setUnidadMedida(productoRequestDTO.getUnidadMedida());
         productoEntity.setCantidad(productoRequestDTO.getCantidad());
         productoEntity.setPrecio(productoRequestDTO.getPrecio());
         productoEntity.setProveedorId(productoRequestDTO.getProveedorId());

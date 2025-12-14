@@ -139,6 +139,33 @@ public class ProductoService {
     }
 
     @Transactional(readOnly = true)
+    public List<ProductoResponseDTO> obtenerProductoPorReferencia(ProductoRequestDTO productoRequestDTO) {
+        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por referencia: {}", productoRequestDTO.getReferencia());
+
+        List<ProductoEntity> productoEntity = productoRepository.findByReferenciaContainingIgnoreCase(productoRequestDTO.getReferencia());
+
+        if (productoEntity.isEmpty()) {
+            log.warn("❌ [RESULTADO] No se encontraron productos con referencia: {}", productoRequestDTO.getReferencia());
+            return List.of();
+        }
+
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (referencia: {})", productoEntity.size(), productoRequestDTO.getReferencia());
+
+        // convertir a stream
+        Stream<ProductoEntity> streamProductos = productoEntity.stream();
+
+        // mapear entidades a DTOs
+        Stream<ProductoResponseDTO> streamDto = streamProductos.map(mapper::mapEntityToResponseDto);
+
+        // recolectar en lista
+        List<ProductoResponseDTO> productosResponse = streamDto.toList();
+
+        log.info("✅ [FINALIZADO] Productos encontrados con referencia: {}. Total encontrados: {}", productoRequestDTO.getReferencia(), productosResponse.size());
+
+        return productosResponse;
+    }
+
+    @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorDescripcion(ProductoRequestDTO productoRequestDTO) {
         log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por descripción: {}", productoRequestDTO.getDescripcion());
 
@@ -161,6 +188,60 @@ public class ProductoService {
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
         log.info("✅ [FINALIZADO] Productos encontrados con descripción: {}. Total encontrados: {}", productoRequestDTO.getDescripcion(), productoEntity.size());
+
+        return productosResponse;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductoResponseDTO> obtenerProductoPorMarca(ProductoRequestDTO productoRequestDTO) {
+        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por marca: {}", productoRequestDTO.getMarca());
+
+        List<ProductoEntity> productoEntity = productoRepository.findByMarcaContainingIgnoreCase(productoRequestDTO.getMarca());
+
+        if (productoEntity.isEmpty()) {
+            log.warn("❌ [RESULTADO] No se encontraron productos con marca: {}", productoRequestDTO.getMarca());
+            return List.of();
+        }
+
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (marca: {})", productoEntity.size(), productoRequestDTO.getMarca());
+
+        // convertir a stream
+        Stream<ProductoEntity> streamProductos = productoEntity.stream();
+
+        // mapear entidades a DTOs
+        Stream<ProductoResponseDTO> streamDto = streamProductos.map(mapper::mapEntityToResponseDto);
+
+        // recolectar en lista
+        List<ProductoResponseDTO> productosResponse = streamDto.toList();
+
+        log.info("✅ [FINALIZADO] Productos encontrados con marca: {}. Total encontrados: {}", productoRequestDTO.getMarca(), productoEntity.size());
+
+        return productosResponse;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductoResponseDTO> obtenerProductoPorUnidadDeMedida(ProductoRequestDTO productoRequestDTO) {
+        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por unidad de medida: {}", productoRequestDTO.getUnidadMedida());
+
+        List<ProductoEntity> productoEntity = productoRepository.findByUnidadMedidaContainingIgnoreCase(productoRequestDTO.getUnidadMedida());
+
+        if (productoEntity.isEmpty()) {
+            log.warn("❌ [RESULTADO] No se encontraron productos con unidad de medida: {}", productoRequestDTO.getUnidadMedida());
+            return List.of();
+        }
+
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (unidad de medida: {})", productoEntity.size(), productoRequestDTO.getUnidadMedida());
+
+        // convertir a stream
+        Stream<ProductoEntity> streamProductos = productoEntity.stream();
+
+        // mapear entidades a DTOs
+        Stream<ProductoResponseDTO> streamDto = streamProductos.map(mapper::mapEntityToResponseDto);
+
+        // recolectar en lista
+        List<ProductoResponseDTO> productosResponse = streamDto.toList();
+
+        log.info("✅ [FINALIZADO] Productos encontrados con unidad de medida: {}. Total encontrados: {}", productoRequestDTO.getUnidadMedida(), productoEntity.size());
 
         return productosResponse;
     }
