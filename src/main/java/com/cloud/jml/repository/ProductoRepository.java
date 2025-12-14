@@ -3,6 +3,7 @@ package com.cloud.jml.repository;
 import com.cloud.jml.model.ProductoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +22,7 @@ public interface ProductoRepository extends JpaRepository<ProductoEntity, Long> 
 
     List<ProductoEntity> findByCantidad(Long cantidad);
 
-    List<ProductoEntity> findByPrecio(Long precio);
+    List<ProductoEntity> findByPrecio(BigDecimal precio);
 
     List<ProductoEntity> findByProveedorId(Long proveedorId);
 

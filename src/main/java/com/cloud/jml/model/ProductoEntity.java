@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Setter
@@ -23,8 +24,12 @@ public class ProductoEntity {
     private String descripcion;
     private String marca;
     private String unidadMedida;
+
+    @Column(nullable = false)
     private Long cantidad;
-    private Long precio;
+
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal precio;
 
     @Column(nullable = false)
     private Long proveedorId;

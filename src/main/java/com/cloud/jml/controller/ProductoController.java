@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -188,7 +189,7 @@ public class ProductoController {
     }
 
     @GetMapping("/precio")
-    public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorPrecio(@RequestParam("precio") Long precio) {
+    public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorPrecio(@RequestParam("precio") BigDecimal precio) {
         log.info("📥 [SOLICITUD] Buscar productos por precio: {}", precio);
 
         ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();

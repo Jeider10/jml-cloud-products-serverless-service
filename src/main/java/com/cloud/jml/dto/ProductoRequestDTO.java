@@ -1,9 +1,8 @@
 package com.cloud.jml.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.math.BigDecimal;
 
 @Setter
 @Getter
@@ -18,7 +17,7 @@ public class ProductoRequestDTO {
     private String marca;
     private String unidadMedida;
     private Long cantidad;
-    private Long precio;
+    private BigDecimal precio;
     private Long proveedorId;
     private String proveedorName;
 }
