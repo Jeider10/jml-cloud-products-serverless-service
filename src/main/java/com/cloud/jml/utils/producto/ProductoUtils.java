@@ -1,6 +1,7 @@
 package com.cloud.jml.utils.producto;
 
 import com.cloud.jml.dto.ProductoRequestDTO;
+import com.cloud.jml.exception.producto.ProductoDeletionException;
 import com.cloud.jml.exception.producto.ProductoNoEncontradoException;
 import com.cloud.jml.exception.producto.ProductoPersistenceException;
 import com.cloud.jml.model.ProductoEntity;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Slf4j
-@Component // 🔹 Anotación para indicar que es un componente de Spring
+@Component // 🔹 Anotacion para indicar que es un componente de Spring
 public class ProductoUtils {
 
     private final ProductoRepository productoRepository;
@@ -24,15 +25,15 @@ public class ProductoUtils {
     }
 
     public ProductoEntity validarExistenciaProducto(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [SOLICITUD] Validando existencia de producto: código={}", productoRequestDTO.getCodigo());
+        log.info("🔍 [SOLICITUD] Validando existencia de producto: codigo={}", productoRequestDTO.getCodigo());
         Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
 
         if (optionalProducto.isPresent()) {
             ProductoEntity productoEntity = optionalProducto.get();
-            log.info("✅ [FINALIZADO] Producto encontrado: código={}", productoEntity.getCodigo());
+            log.info("✅ [FINALIZADO] Producto encontrado: codigo={}", productoEntity.getCodigo());
             return productoEntity;
         } else {
-            log.warn("⚠️ [RESULTADO] Producto no encontrado: código={}", productoRequestDTO.getCodigo());
+            log.warn("⚠️ [RESULTADO] Producto no encontrado: codigo={}", productoRequestDTO.getCodigo());
             throw new ProductoNoEncontradoException(productoRequestDTO.getCodigo());
         }
     }
@@ -42,16 +43,16 @@ public class ProductoUtils {
             return productoRepository.save(productoEntity);
 
         } catch (DataIntegrityViolationException e) {
-            log.error("🚨 Violación de integridad al guardar el producto: {}", e.getMessage(), e);
-            throw new ProductoPersistenceException("Error de integridad en base de datos al guardar el producto", e);
+            log.error("🚨 Violacion de integridad al guardar el producto: {}", e.getMessage(), e);
+            throw ProductoPersistenceException.integrityViolation(e);
 
         } catch (DataAccessException e) {
             log.error("🚨 Error de acceso a datos al guardar el producto: {}", e.getMessage(), e);
-            throw new ProductoPersistenceException("Error al guardar el producto en la base de datos", e);
+            throw ProductoPersistenceException.dataAccessError(e);
 
         } catch (Exception e) {
             log.error("🚨 Error inesperado al guardar el producto: {}", e.getMessage(), e);
-            throw new ProductoPersistenceException("Error inesperado al registrar el producto", e);
+            throw ProductoPersistenceException.unexpected(e);
         }
     }
 
@@ -60,16 +61,16 @@ public class ProductoUtils {
             productoRepository.delete(productoEntity);
 
         } catch (DataIntegrityViolationException e) {
-            log.error("🚨 Violación de integridad al eliminar el producto: {}", e.getMessage(), e);
-            throw new ProductoPersistenceException("Error de integridad en base de datos al eliminar el producto", e);
+            log.error("🚨 Violacion de integridad al eliminar el producto: {}", e.getMessage(), e);
+            throw ProductoDeletionException.integrityViolation(e);
 
         } catch (DataAccessException e) {
             log.error("🚨 Error de acceso a datos al eliminar el producto: {}", e.getMessage(), e);
-            throw new ProductoPersistenceException("Error al eliminar el producto en la base de datos", e);
+            throw ProductoDeletionException.dataAccessError(e);
 
         } catch (Exception e) {
             log.error("🚨 Error inesperado al eliminar el producto: {}", e.getMessage(), e);
-            throw new ProductoPersistenceException("Error inesperado al eliminar el producto", e);
+            throw ProductoDeletionException.unexpected(e);
         }
     }
 }

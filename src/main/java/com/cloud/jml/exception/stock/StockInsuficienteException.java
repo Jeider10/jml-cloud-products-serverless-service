@@ -6,7 +6,8 @@ public class StockInsuficienteException extends StockRuntimeException {
 
     public StockInsuficienteException(int cantidad) {
         super(
-                HttpStatus.NOT_FOUND,
-                "❌ [CONSULTA] Stock insuficiente: " + cantidad);
+                HttpStatus.CONFLICT,
+                "❌ [STOCK] Stock insuficiente. Cantidad solicitada: " + cantidad
+        );
     }
 }

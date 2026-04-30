@@ -7,6 +7,6 @@ public class ProductoDuplicadoException extends ProductoRuntimeException {
     public ProductoDuplicadoException(Long codigo) {
         super(
                 HttpStatus.CONFLICT,
-                "⚠️ [DUPLICADO] Producto duplicado detectado con código: " + codigo);
+                "⚠️ [DUPLICADO] Producto duplicado detectado con codigo: " + codigo);
     }
 }

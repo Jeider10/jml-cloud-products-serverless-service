@@ -7,6 +7,7 @@ public class ProductoNoEncontradoException extends ProductoRuntimeException {
     public ProductoNoEncontradoException(Long codigo) {
         super(
                 HttpStatus.NOT_FOUND,
-                "❌ [CONSULTA] Producto no encontrado con código: " + codigo);
+                "❌ [CONSULTA] Producto no encontrado con codigo: " + codigo
+        );
     }
 }

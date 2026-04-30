@@ -61,7 +61,7 @@ public class ProductoService {
 
     @Transactional
     public ProductoResponseDTO crearProducto(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Inicio de creación de producto: {}", productoRequestDTO.getNombre());
+        log.info("🔍 [CONSULTA] Inicio de creacion de producto: {}", productoRequestDTO.getNombre());
 
         Optional<ProductoEntity> productoExistente = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
 
@@ -72,48 +72,48 @@ public class ProductoService {
 
         log.info("📦 [MAPEO] Transformando DTO a entidad de producto");
         ProductoEntity productoEntity = mapper.mapRequestDtoToEntity(productoRequestDTO);
-        log.info("📦 [MAPEO] Producto: {} mapeado a entidad con código: {}", productoEntity.getNombre(), productoEntity.getCodigo());
+        log.info("📦 [MAPEO] Producto: {} mapeado a entidad con codigo: {}", productoEntity.getNombre(), productoEntity.getCodigo());
 
         ProductoEntity guardarProducto = productoUtils.guardarProductoBD(productoEntity);
-        log.info("💾 [PERSISTENCIA] Producto: {} guardado exitosamente con código: {}", guardarProducto.getNombre(), guardarProducto.getCodigo());
+        log.info("💾 [PERSISTENCIA] Producto: {} guardado exitosamente con codigo: {}", guardarProducto.getNombre(), guardarProducto.getCodigo());
 
         log.info("📦 [MAPEO] Transformando entidad de producto a DTO. (crearProducto)");
         ProductoResponseDTO productoResponseDTO = mapper.mapEntityToResponseDto(guardarProducto);
-        log.info("📦 [MAPEO] Producto mapeado a DTO. código: {}, nombre: {}, descripción: {}",
+        log.info("📦 [MAPEO] Producto mapeado a DTO. codigo: {}, nombre: {}, descripcion: {}",
                 productoResponseDTO.getCodigo(), productoResponseDTO.getNombre(), productoResponseDTO.getDescripcion());
 
-        log.info("✅ [FINALIZADO] Producto creado correctamente: {} con código {}", productoResponseDTO.getNombre(), productoResponseDTO.getCodigo());
+        log.info("✅ [FINALIZADO] Producto creado correctamente: {} con codigo {}", productoResponseDTO.getNombre(), productoResponseDTO.getCodigo());
 
         return productoResponseDTO;
     }
 
     @Transactional(readOnly = true)
     public ProductoResponseDTO obtenerProductoPorCodigo(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por código: {}", productoRequestDTO.getCodigo());
+        log.info("🔍 [CONSULTA] Iniciando busqueda de producto por codigo: {}", productoRequestDTO.getCodigo());
 
         Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
 
         if (optionalProducto.isEmpty()) {
-            log.warn("❌ [RESULTADO] Producto no encontrado con código: {}", productoRequestDTO.getCodigo());
+            log.warn("❌ [RESULTADO] Producto no encontrado con codigo: {}", productoRequestDTO.getCodigo());
             return null;
         }
 
         ProductoEntity productoEntity = optionalProducto.get();
-        log.info("📦 [ENCONTRADO] Producto encontrado -> código: {}, nombre: {}, cantidad: {}",
+        log.info("📦 [ENCONTRADO] Producto encontrado -> codigo: {}, nombre: {}, cantidad: {}",
                 productoEntity.getCodigo(), productoEntity.getNombre(), productoEntity.getCantidad());
 
         log.info("📦 [MAPEO] Transformando entidad de producto a DTO. (obtenerProductoPorCodigo)");
         ProductoResponseDTO productoResponseDTO = mapper.mapEntityToResponseDto(productoEntity);
-        log.info("📦 [MAPEO] Producto mapeado a DTO. código: {}", productoResponseDTO.getCodigo());
+        log.info("📦 [MAPEO] Producto mapeado a DTO. codigo: {}", productoResponseDTO.getCodigo());
 
-        log.info("✅ [FINALIZADO] Producto encontrado con código: {}", productoResponseDTO.getCodigo());
+        log.info("✅ [FINALIZADO] Producto encontrado con codigo: {}", productoResponseDTO.getCodigo());
 
         return productoResponseDTO;
     }
 
     @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorNombre(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por nombre: {}", productoRequestDTO.getNombre());
+        log.info("🔍 [CONSULTA] Iniciando busqueda de producto por nombre: {}", productoRequestDTO.getNombre());
 
         List<ProductoEntity> productoEntity = productoRepository.findByNombreContainingIgnoreCase(productoRequestDTO.getNombre());
 
@@ -140,7 +140,7 @@ public class ProductoService {
 
     @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorReferencia(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por referencia: {}", productoRequestDTO.getReferencia());
+        log.info("🔍 [CONSULTA] Iniciando busqueda de producto por referencia: {}", productoRequestDTO.getReferencia());
 
         List<ProductoEntity> productoEntity = productoRepository.findByReferenciaContainingIgnoreCase(productoRequestDTO.getReferencia());
 
@@ -167,16 +167,16 @@ public class ProductoService {
 
     @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorDescripcion(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por descripción: {}", productoRequestDTO.getDescripcion());
+        log.info("🔍 [CONSULTA] Iniciando busqueda de producto por descripcion: {}", productoRequestDTO.getDescripcion());
 
         List<ProductoEntity> productoEntity = productoRepository.findByDescripcionContainingIgnoreCase(productoRequestDTO.getDescripcion());
 
         if (productoEntity.isEmpty()) {
-            log.warn("❌ [RESULTADO] No se encontraron productos con descripción: {}", productoRequestDTO.getDescripcion());
+            log.warn("❌ [RESULTADO] No se encontraron productos con descripcion: {}", productoRequestDTO.getDescripcion());
             return List.of();
         }
 
-        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (descripción: {})", productoEntity.size(), productoRequestDTO.getDescripcion());
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (descripcion: {})", productoEntity.size(), productoRequestDTO.getDescripcion());
 
         // convertir a stream
         Stream<ProductoEntity> streamProductos = productoEntity.stream();
@@ -187,14 +187,14 @@ public class ProductoService {
         // recolectar en lista
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
-        log.info("✅ [FINALIZADO] Productos encontrados con descripción: {}. Total encontrados: {}", productoRequestDTO.getDescripcion(), productoEntity.size());
+        log.info("✅ [FINALIZADO] Productos encontrados con descripcion: {}. Total encontrados: {}", productoRequestDTO.getDescripcion(), productoEntity.size());
 
         return productosResponse;
     }
 
     @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorMarca(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por marca: {}", productoRequestDTO.getMarca());
+        log.info("🔍 [CONSULTA] Iniciando busqueda de producto por marca: {}", productoRequestDTO.getMarca());
 
         List<ProductoEntity> productoEntity = productoRepository.findByMarcaContainingIgnoreCase(productoRequestDTO.getMarca());
 
@@ -221,7 +221,7 @@ public class ProductoService {
 
     @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorUnidadDeMedida(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por unidad de medida: {}", productoRequestDTO.getUnidadMedida());
+        log.info("🔍 [CONSULTA] Iniciando busqueda de producto por unidad de medida: {}", productoRequestDTO.getUnidadMedida());
 
         List<ProductoEntity> productoEntity = productoRepository.findByUnidadMedidaContainingIgnoreCase(productoRequestDTO.getUnidadMedida());
 
@@ -246,9 +246,9 @@ public class ProductoService {
         return productosResponse;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorCantidad(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por cantidad: {}", productoRequestDTO.getCantidad());
+        log.info("🔍 [CONSULTA] Iniciando busqueda de producto por cantidad: {}", productoRequestDTO.getCantidad());
 
         List<ProductoEntity> productoEntity = productoRepository.findByCantidad(productoRequestDTO.getCantidad());
 
@@ -273,9 +273,9 @@ public class ProductoService {
         return productosResponse;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorPrecio(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por precio: {}", productoRequestDTO.getPrecio());
+        log.info("🔍 [CONSULTA] Iniciando busqueda de producto por precio: {}", productoRequestDTO.getPrecio());
 
         List<ProductoEntity> productoEntity = productoRepository.findByPrecio(productoRequestDTO.getPrecio());
 
@@ -300,9 +300,9 @@ public class ProductoService {
         return productosResponse;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorProveedorId(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por proveedorId: {}", productoRequestDTO.getProveedorId());
+        log.info("🔍 [CONSULTA] Iniciando busqueda de producto por proveedorId: {}", productoRequestDTO.getProveedorId());
 
         List<ProductoEntity> productoEntity = productoRepository.findByProveedorId(productoRequestDTO.getProveedorId());
 
@@ -327,9 +327,9 @@ public class ProductoService {
         return productosResponse;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorProveedorName(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Iniciando búsqueda de producto por proveedorName: {}", productoRequestDTO.getProveedorName());
+        log.info("🔍 [CONSULTA] Iniciando busqueda de producto por proveedorName: {}", productoRequestDTO.getProveedorName());
 
         List<ProductoEntity> productoEntity = productoRepository.findByProveedorNameContainingIgnoreCase(productoRequestDTO.getProveedorName());
 
@@ -356,7 +356,7 @@ public class ProductoService {
 
     @Transactional
     public ProductoResponseDTO actualizarProducto(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Inicio de actualización de producto con código: {}", productoRequestDTO.getCodigo());
+        log.info("🔍 [CONSULTA] Inicio de actualizacion de producto con codigo: {}", productoRequestDTO.getCodigo());
 
         // Paso 1: Validar existencia
         ProductoEntity productoEntity = productoUtils.validarExistenciaProducto(productoRequestDTO);
@@ -366,50 +366,50 @@ public class ProductoService {
 
         // Paso 3: Guardar cambios en la BD
         ProductoEntity actualizado = productoUtils.guardarProductoBD(productoEntity);
-        log.info("💾 [PERSISTENCIA] Producto actualizado: {} con código: {}", actualizado.getNombre(), actualizado.getCodigo());
+        log.info("💾 [PERSISTENCIA] Producto actualizado: {} con codigo: {}", actualizado.getNombre(), actualizado.getCodigo());
 
         // Paso 4: Mapear a DTO
         log.info("📦 [MAPEO] Transformando entidad de producto a DTO. (actualizarProducto)");
         ProductoResponseDTO productoResponseDTO = mapper.mapEntityToResponseDto(actualizado);
-        log.info("📦 [MAPEO] Producto mapeado a DTO. código: {}, nombres: {}",
+        log.info("📦 [MAPEO] Producto mapeado a DTO. codigo: {}, nombres: {}",
                 productoEntity.getCodigo(), productoEntity.getNombre());
 
-        log.info("✅ [FINALIZADO] Actualización de producto completada: {} con código: {}", productoResponseDTO.getNombre(), productoResponseDTO.getCodigo());
+        log.info("✅ [FINALIZADO] Actualizacion de producto completada: {} con codigo: {}", productoResponseDTO.getNombre(), productoResponseDTO.getCodigo());
 
         return productoResponseDTO;
     }
 
     @Transactional
     public void eliminarProducto(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [CONSULTA] Inicio de eliminación de producto con código: {}", productoRequestDTO.getCodigo());
+        log.info("🔍 [CONSULTA] Inicio de eliminacion de producto con codigo: {}", productoRequestDTO.getCodigo());
 
         Optional<ProductoEntity> productoExistente = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
 
         if (productoExistente.isPresent()) {
             ProductoEntity productoEntity = productoExistente.get();
-            log.info("📦 [ENCONTRADO] Producto localizado -> {} con código: {}", productoEntity.getNombre(), productoEntity.getCodigo());
+            log.info("📦 [ENCONTRADO] Producto localizado -> {} con codigo: {}", productoEntity.getNombre(), productoEntity.getCodigo());
 
             productoUtils.eliminarProductoBD(productoEntity);
-            log.info("🗑️ [ELIMINADO] Producto eliminado correctamente -> {} con código: {}", productoEntity.getNombre(), productoEntity.getCodigo());
+            log.info("🗑️ [ELIMINADO] Producto eliminado correctamente -> {} con codigo: {}", productoEntity.getNombre(), productoEntity.getCodigo());
         } else {
-            log.warn("❌ [NO ENCONTRADO] Producto no encontrado con código: {}", productoRequestDTO.getCodigo());
+            log.warn("❌ [NO ENCONTRADO] Producto no encontrado con codigo: {}", productoRequestDTO.getCodigo());
             throw new ProductoNoEncontradoException(productoRequestDTO.getCodigo());
         }
     }
 
     @Transactional
     public ProductoResponseDTO restarStock(Long codigo, int cantidad) {
-        log.info("📦 [CONSULTA] Iniciando proceso para restar {} unidades al producto con código {}", cantidad, codigo);
+        log.info("📦 [CONSULTA] Iniciando proceso para restar {} unidades al producto con codigo {}", cantidad, codigo);
 
         Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigo(codigo);
 
         if (optionalProducto.isEmpty()) {
-            log.warn("❌ [NO ENCONTRADO] Producto no encontrado con código {} en la base.", codigo);
+            log.warn("❌ [NO ENCONTRADO] Producto no encontrado con codigo {} en la base.", codigo);
             throw new ProductoNoEncontradoException(codigo);
         }
 
         ProductoEntity productoEntity = optionalProducto.get();
-        log.info("📦 [ENCONTRADO] Producto encontrado -> {} con código: {}", productoEntity.getNombre(), productoEntity.getCodigo());
+        log.info("📦 [ENCONTRADO] Producto encontrado -> {} con codigo: {}", productoEntity.getNombre(), productoEntity.getCodigo());
 
         if (productoEntity.getCantidad() < cantidad) {
             log.warn("📦 [STOCK] Stock insuficiente. Disponible: {}, Solicitado: {} para producto {}",
@@ -421,18 +421,18 @@ public class ProductoService {
         long nuevoStock = productoEntity.getCantidad() - cantidad;
         productoEntity.setCantidad(nuevoStock);
 
-        log.info("📦 [STOCK] Stock actualizado correctamente para producto con código {}. Nuevo stock: {}", codigo, nuevoStock);
+        log.info("📦 [STOCK] Stock actualizado correctamente para producto con codigo {}. Nuevo stock: {}", codigo, nuevoStock);
 
         ProductoEntity actualizado = productoUtils.guardarProductoBD(productoEntity);
 
-        log.info("✅ [FINALIZADO] Producto con código {} guardado exitosamente con nuevo stock {}", codigo, actualizado.getCantidad());
+        log.info("✅ [FINALIZADO] Producto con codigo {} guardado exitosamente con nuevo stock {}", codigo, actualizado.getCantidad());
 
         log.info("📦 [MAPEO] Transformando entidad de producto a DTO. (restarStock)");
         ProductoResponseDTO productoResponseDTO = mapper.mapEntityToResponseDto(actualizado);
-        log.info("📦 [MAPEO] Producto mapeado a DTO. código: {}, cantidad: {}",
+        log.info("📦 [MAPEO] Producto mapeado a DTO. codigo: {}, cantidad: {}",
                 productoEntity.getCodigo(), productoEntity.getCantidad());
 
-        log.info("✅ [FINALIZADO] Actualización de producto completada con código: {} y cantidad: {}",
+        log.info("✅ [FINALIZADO] Actualizacion de producto completada con codigo: {} y cantidad: {}",
                 productoResponseDTO.getCodigo(), productoResponseDTO.getCantidad());
 
         return productoResponseDTO;

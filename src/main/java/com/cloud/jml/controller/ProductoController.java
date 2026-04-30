@@ -3,6 +3,7 @@ package com.cloud.jml.controller;
 import com.cloud.jml.dto.ProductoRequestDTO;
 import com.cloud.jml.dto.ProductoResponseDTO;
 import com.cloud.jml.service.ProductoService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class ProductoController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ProductoResponseDTO> crearProducto(@RequestBody ProductoRequestDTO productoRequestDTO) {
+    public ResponseEntity<ProductoResponseDTO> crearProducto(@Valid @RequestBody ProductoRequestDTO productoRequestDTO) {
         log.info("📥 [SOLICITUD] Crear producto: {}", productoRequestDTO.getNombre());
 
         ProductoResponseDTO crearProductoResponse = productoService.crearProducto(productoRequestDTO);
@@ -50,14 +51,14 @@ public class ProductoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        log.info("📤 [RESPUESTA] Producto creado exitosamente: {} (código: {}).", crearProductoResponse.getNombre(), crearProductoResponse.getCodigo());
+        log.info("📤 [RESPUESTA] Producto creado exitosamente: {} (codigo: {}).", crearProductoResponse.getNombre(), crearProductoResponse.getCodigo());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(crearProductoResponse);
     }
 
     @GetMapping("/codigo")
     public ResponseEntity<ProductoResponseDTO> obtenerProductoPorCodigo(@RequestParam("codigo") Long codigo) {
-        log.info("📥 [SOLICITUD] Buscar producto por código: {}", codigo);
+        log.info("📥 [SOLICITUD] Buscar producto por codigo: {}", codigo);
 
         ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
         productoRequestDTO.setCodigo(codigo);
@@ -65,11 +66,11 @@ public class ProductoController {
         ProductoResponseDTO productoCodigo = productoService.obtenerProductoPorCodigo(productoRequestDTO);
 
         if (productoCodigo == null) {
-            log.warn("⚠️ [RESPUESTA] Producto no encontrado con código: {}", codigo);
+            log.warn("⚠️ [RESPUESTA] Producto no encontrado con codigo: {}", codigo);
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Producto encontrado: {} (código: {}).", productoCodigo.getNombre(), productoCodigo.getCodigo());
+        log.info("📤 [RESPUESTA] Producto encontrado: {} (codigo: {}).", productoCodigo.getNombre(), productoCodigo.getCodigo());
 
         return ResponseEntity.ok(productoCodigo);
     }
@@ -114,7 +115,7 @@ public class ProductoController {
 
     @GetMapping("/descripcion")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorDescripcion(@RequestParam("descripcion") String descripcion) {
-        log.info("📥 [SOLICITUD] Buscar productos por descripción: {}", descripcion);
+        log.info("📥 [SOLICITUD] Buscar productos por descripcion: {}", descripcion);
 
         ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
         productoRequestDTO.setDescripcion(descripcion);
@@ -122,11 +123,11 @@ public class ProductoController {
         List<ProductoResponseDTO> productosDescripcion = productoService.obtenerProductoPorDescripcion(productoRequestDTO);
 
         if (productosDescripcion == null || productosDescripcion.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos con descripción: {}", descripcion);
+            log.warn("⚠️ [RESPUESTA] No se encontraron productos con descripcion: {}", descripcion);
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos con descripción: {}", productosDescripcion.size(), descripcion);
+        log.info("📤 [RESPUESTA] Se retornan {} productos con descripcion: {}", productosDescripcion.size(), descripcion);
 
         return ResponseEntity.ok(productosDescripcion);
     }
@@ -246,17 +247,17 @@ public class ProductoController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ProductoResponseDTO> actualizarProducto(@RequestBody ProductoRequestDTO productoRequestDTO) {
-        log.info("📥 [SOLICITUD] Actualizar producto con código: {}", productoRequestDTO.getCodigo());
+    public ResponseEntity<ProductoResponseDTO> actualizarProducto(@Valid @RequestBody ProductoRequestDTO productoRequestDTO) {
+        log.info("📥 [SOLICITUD] Actualizar producto con codigo: {}", productoRequestDTO.getCodigo());
 
         ProductoResponseDTO productoResponseDTO = productoService.actualizarProducto(productoRequestDTO);
 
         if (productoResponseDTO == null || productoResponseDTO.getCodigo() == null) {
-            log.warn("⚠️ [RESPUESTA] No se pudo actualizar el producto con código: {}", productoRequestDTO.getCodigo());
+            log.warn("⚠️ [RESPUESTA] No se pudo actualizar el producto con codigo: {}", productoRequestDTO.getCodigo());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        log.info("📤 [RESPUESTA] Producto actualizado correctamente: {} (código: {}).", productoResponseDTO.getNombre(), productoResponseDTO.getCodigo());
+        log.info("📤 [RESPUESTA] Producto actualizado correctamente: {} (codigo: {}).", productoResponseDTO.getNombre(), productoResponseDTO.getCodigo());
 
         return ResponseEntity.ok(productoResponseDTO);
     }
@@ -266,30 +267,30 @@ public class ProductoController {
             @PathVariable Long codigo,
             @RequestParam int cantidad) {
 
-        log.info("📥 [SOLICITUD] [📦 STOCK] Restar {} unidades al producto con código: {}", cantidad, codigo);
+        log.info("📥 [SOLICITUD] [📦 STOCK] Restar {} unidades al producto con codigo: {}", cantidad, codigo);
 
         ProductoResponseDTO productoResponseDTO = productoService.restarStock(codigo, cantidad);
 
         if (productoResponseDTO == null || productoResponseDTO.getCodigo() == null) {
-            log.warn("⚠️ [RESPUESTA] No se pudo restar stock al producto con código: {}", codigo);
+            log.warn("⚠️ [RESPUESTA] No se pudo restar stock al producto con codigo: {}", codigo);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        log.info("📤 [RESPUESTA] [📦 STOCK] Stock actualizado correctamente para el producto con código: {}", productoResponseDTO.getCodigo());
+        log.info("📤 [RESPUESTA] [📦 STOCK] Stock actualizado correctamente para el producto con codigo: {}", productoResponseDTO.getCodigo());
 
         return ResponseEntity.ok(productoResponseDTO);
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> eliminarProducto(@RequestParam("codigo") Long codigo) {
-        log.info("📥 [SOLICITUD] Eliminar producto con código: {}", codigo);
+        log.info("📥 [SOLICITUD] Eliminar producto con codigo: {}", codigo);
 
         ProductoRequestDTO request = new ProductoRequestDTO();
         request.setCodigo(codigo);
 
         productoService.eliminarProducto(request);
 
-        log.info("📤 [RESPUESTA] Producto eliminado correctamente con código: {}", codigo);
+        log.info("📤 [RESPUESTA] Producto eliminado correctamente con codigo: {}", codigo);
 
         return ResponseEntity.ok().build();
     }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 @Slf4j
-@Component // 🔹 Anotación para indicar que es un componente de Spring
+@Component // 🔹 Anotacion para indicar que es un componente de Spring
 public class ProductoMapper {
 
     private final ProductoFormatearFecha productoFormatearFecha;
@@ -66,7 +66,7 @@ public class ProductoMapper {
     }
 
     public void actualizarDatosProductoExistente(ProductoRequestDTO productoRequestDTO, ProductoEntity productoEntity) {
-        log.info("📦 [ACTUALIZACIÓN] Iniciando actualización de datos para producto: nombre={}", productoRequestDTO.getNombre());
+        log.info("📦 [ACTUALIZACION] Iniciando actualizacion de datos para producto: nombre={}", productoRequestDTO.getNombre());
 
         productoEntity.setNombre(productoRequestDTO.getNombre());
         productoEntity.setReferencia(productoRequestDTO.getReferencia());
@@ -80,6 +80,6 @@ public class ProductoMapper {
 
         productoEntity.setFechaActualizacion(LocalDateTime.now());
 
-        log.info("✅ [ACTUALIZACIÓN] Datos actualizados para producto: nombre={}", productoRequestDTO.getNombre());
+        log.info("✅ [ACTUALIZACION] Datos actualizados para producto: nombre={}", productoRequestDTO.getNombre());
     }
 }

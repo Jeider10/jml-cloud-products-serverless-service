@@ -5,21 +5,21 @@ import org.springframework.http.HttpStatus;
 public class ProductoDeletionException extends ProductoRuntimeException {
 
     public ProductoDeletionException(String message) {
-        super(HttpStatus.INTERNAL_SERVER_ERROR, "🗑️ [ELIMINACIÓN] " + message);
+        super(HttpStatus.INTERNAL_SERVER_ERROR, "🗑️ [ELIMINACION] " + message);
     }
 
     public ProductoDeletionException(String message, Throwable cause) {
         super(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "🗑️ [ELIMINACIÓN] " + message +
+                "🗑️ [ELIMINACION] " + message +
                         (cause != null ? " | 💥 Causa: " + cause.getMessage() : "")
         );
     }
 
-    // 🔒 Violación de integridad referencial (por constraints o dependencias)
+    // 🔒 Violacion de integridad referencial (por constraints o dependencias)
     public static ProductoDeletionException integrityViolation(Throwable cause) {
         return new ProductoDeletionException(
-                "❌ [INTEGRIDAD] No se pudo eliminar el producto debido a una violación de integridad referencial",
+                "❌ [INTEGRIDAD] No se pudo eliminar el producto debido a una violacion de integridad referencial",
                 cause
         );
     }
@@ -35,7 +35,7 @@ public class ProductoDeletionException extends ProductoRuntimeException {
     // 💥 Error inesperado
     public static ProductoDeletionException unexpected(Throwable cause) {
         return new ProductoDeletionException(
-                "💥 [INESPERADO] Ocurrió un error inesperado al intentar eliminar el producto",
+                "💥 [INESPERADO] Ocurrio un error inesperado al intentar eliminar el producto",
                 cause
         );
     }
