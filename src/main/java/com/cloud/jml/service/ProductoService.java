@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -350,6 +351,34 @@ public class ProductoService {
         List<ProductoResponseDTO> productosResponse = streamDto.toList();
 
         log.info("✅ [FINALIZADO] Productos encontrados con proveedorName: {}. Total encontrados: {}", productoRequestDTO.getProveedorName(), productoEntity.size());
+
+        return productosResponse;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductoResponseDTO> obtenerProductoPorFechaCreacion(String fechaInicio, String fechaFin) {
+        log.info("🔍 [CONSULTA] Iniciando busqueda de productos por rango de fecha de creacion: {} - {}", fechaInicio, fechaFin);
+
+        // Parsear fechas con soporte flexible (solo fecha o fecha+hora)
+        LocalDateTime inicio = productoUtils.parsearFechaInicio(fechaInicio);
+        LocalDateTime fin = productoUtils.parsearFechaFin(fechaFin);
+
+        log.info("📅 [RANGO] Buscando productos entre {} y {}", inicio, fin);
+
+        List<ProductoEntity> productoEntity = productoRepository.findByFechaCreacionBetween(inicio, fin);
+
+        if (productoEntity.isEmpty()) {
+            log.warn("❌ [RESULTADO] No se encontraron productos en el rango de fechas: {} - {}", inicio, fin);
+            return List.of();
+        }
+
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (rango de fechas)", productoEntity.size());
+
+        List<ProductoResponseDTO> productosResponse = productoEntity.stream()
+                .map(mapper::mapEntityToResponseDto)
+                .toList();
+
+        log.info("✅ [FINALIZADO] Productos encontrados en rango de fechas. Total encontrados: {}", productosResponse.size());
 
         return productosResponse;
     }

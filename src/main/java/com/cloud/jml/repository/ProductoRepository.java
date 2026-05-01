@@ -4,10 +4,14 @@ import com.cloud.jml.model.ProductoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface ProductoRepository extends JpaRepository<ProductoEntity, Long> {
+
+    List<ProductoEntity> findByFechaCreacionBetween(LocalDateTime inicio, LocalDateTime fin);
+
     Optional<ProductoEntity> findByCodigo(Long codigo);
 
     List<ProductoEntity> findByNombreContainingIgnoreCase(String nombre);

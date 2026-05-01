@@ -246,6 +246,25 @@ public class ProductoController {
         return ResponseEntity.ok(productosProveedorName);
     }
 
+    @GetMapping("/fechaCreacion")
+    public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorFechaCreacion(
+            @RequestParam("fechaInicio") String fechaInicio,
+            @RequestParam("fechaFin") String fechaFin) {
+
+        log.info("📥 [SOLICITUD] Buscar productos por rango de fecha de creacion: {} - {}", fechaInicio, fechaFin);
+
+        List<ProductoResponseDTO> productosFecha = productoService.obtenerProductoPorFechaCreacion(fechaInicio, fechaFin);
+
+        if (productosFecha == null || productosFecha.isEmpty()) {
+            log.warn("⚠️ [RESPUESTA] No se encontraron productos en el rango de fechas: {} - {}", fechaInicio, fechaFin);
+            return ResponseEntity.noContent().build();
+        }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos en el rango de fechas.", productosFecha.size());
+
+        return ResponseEntity.ok(productosFecha);
+    }
+
     @PutMapping("/update")
     public ResponseEntity<ProductoResponseDTO> actualizarProducto(@Valid @RequestBody ProductoRequestDTO productoRequestDTO) {
         log.info("📥 [SOLICITUD] Actualizar producto con codigo: {}", productoRequestDTO.getCodigo());
