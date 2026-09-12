@@ -22,7 +22,7 @@ public class ProductoEntity {
 
     @Id
     @Column(nullable = false)
-    private Long codigo;
+    private String codigo;
 
     @Column(nullable = false)
     private String nombre;
@@ -38,6 +38,7 @@ public class ProductoEntity {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal precio;
 
+    // Proveedor es obligatorio — todo producto debe tener proveedor asignado
     @Column(nullable = false)
     private Long proveedorId;
 

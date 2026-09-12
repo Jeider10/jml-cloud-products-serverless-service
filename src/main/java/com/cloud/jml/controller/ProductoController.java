@@ -57,7 +57,7 @@ public class ProductoController {
     }
 
     @GetMapping("/codigo")
-    public ResponseEntity<ProductoResponseDTO> obtenerProductoPorCodigo(@RequestParam("codigo") Long codigo) {
+    public ResponseEntity<ProductoResponseDTO> obtenerProductoPorCodigo(@RequestParam("codigo") String codigo) {
         log.info("📥 [SOLICITUD] Buscar producto por codigo: {}", codigo);
 
         ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
@@ -302,7 +302,7 @@ public class ProductoController {
 
     @PutMapping("/restar-stock/{codigo}")
     public ResponseEntity<ProductoResponseDTO> restarStock(
-            @PathVariable Long codigo,
+            @PathVariable String codigo,
             @RequestParam int cantidad) {
 
         log.info("📥 [SOLICITUD] [📦 STOCK] Restar {} unidades al producto con codigo: {}", cantidad, codigo);
@@ -320,7 +320,7 @@ public class ProductoController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> eliminarProducto(@RequestParam("codigo") Long codigo) {
+    public ResponseEntity<Void> eliminarProducto(@RequestParam("codigo") String codigo) {
         log.info("📥 [SOLICITUD] Eliminar producto con codigo: {}", codigo);
 
         ProductoRequestDTO request = new ProductoRequestDTO();

@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor // Constructor con todos los argumentos
 public class ProductoResponseDTO {
 
-    private Long codigo;
+    private String codigo;
     private String nombre;
     private String referencia;
     private String descripcion;

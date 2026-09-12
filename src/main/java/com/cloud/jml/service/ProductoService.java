@@ -452,7 +452,7 @@ public class ProductoService {
     }
 
     @Transactional
-    public ProductoResponseDTO restarStock(Long codigo, int cantidad) {
+    public ProductoResponseDTO restarStock(String codigo, int cantidad) {
         log.info("📦 [CONSULTA] Iniciando proceso para restar {} unidades al producto con codigo {}", cantidad, codigo);
 
         Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigo(codigo);

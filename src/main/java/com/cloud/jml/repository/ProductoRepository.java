@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductoRepository extends JpaRepository<ProductoEntity, Long> {
+public interface ProductoRepository extends JpaRepository<ProductoEntity, String> {
 
     List<ProductoEntity> findByFechaCreacionBetween(LocalDateTime inicio, LocalDateTime fin);
 
     List<ProductoEntity> findByFechaActualizacionBetween(LocalDateTime inicio, LocalDateTime fin);
 
-    Optional<ProductoEntity> findByCodigo(Long codigo);
+    Optional<ProductoEntity> findByCodigo(String codigo);
 
     List<ProductoEntity> findByNombreContainingIgnoreCase(String nombre);
 
