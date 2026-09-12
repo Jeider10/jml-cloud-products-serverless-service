@@ -383,6 +383,31 @@ public class ProductoService {
         return productosResponse;
     }
 
+    @Transactional(readOnly = true)
+    public List<ProductoResponseDTO> obtenerProductoPorFechaActualizacion(String fechaInicio, String fechaFin) {
+        log.info("🔍 [CONSULTA] Iniciando busqueda de productos por rango de fecha de actualizacion: {} - {}", fechaInicio, fechaFin);
+
+        LocalDateTime inicio = productoUtils.parsearFechaInicio(fechaInicio);
+        LocalDateTime fin = productoUtils.parsearFechaFin(fechaFin);
+
+        log.info("📅 [RANGO] Buscando productos entre {} y {}", inicio, fin);
+
+        List<ProductoEntity> productoEntity = productoRepository.findByFechaActualizacionBetween(inicio, fin);
+
+        if (productoEntity.isEmpty()) {
+            log.warn("❌ [RESULTADO] No se encontraron productos en el rango de fecha de actualizacion: {} - {}", inicio, fin);
+            return List.of();
+        }
+
+        List<ProductoResponseDTO> productosResponse = productoEntity.stream()
+                .map(mapper::mapEntityToResponseDto)
+                .toList();
+
+        log.info("✅ [FINALIZADO] Productos encontrados por fecha de actualizacion. Total: {}", productosResponse.size());
+
+        return productosResponse;
+    }
+
     @Transactional
     public ProductoResponseDTO actualizarProducto(ProductoRequestDTO productoRequestDTO) {
         log.info("🔍 [CONSULTA] Inicio de actualizacion de producto con codigo: {}", productoRequestDTO.getCodigo());

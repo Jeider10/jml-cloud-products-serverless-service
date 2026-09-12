@@ -12,6 +12,8 @@ public interface ProductoRepository extends JpaRepository<ProductoEntity, Long> 
 
     List<ProductoEntity> findByFechaCreacionBetween(LocalDateTime inicio, LocalDateTime fin);
 
+    List<ProductoEntity> findByFechaActualizacionBetween(LocalDateTime inicio, LocalDateTime fin);
+
     Optional<ProductoEntity> findByCodigo(Long codigo);
 
     List<ProductoEntity> findByNombreContainingIgnoreCase(String nombre);

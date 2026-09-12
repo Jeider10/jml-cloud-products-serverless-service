@@ -265,6 +265,25 @@ public class ProductoController {
         return ResponseEntity.ok(productosFecha);
     }
 
+    @GetMapping("/fechaActualizacion")
+    public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorFechaActualizacion(
+            @RequestParam("fechaInicio") String fechaInicio,
+            @RequestParam("fechaFin") String fechaFin) {
+
+        log.info("📥 [SOLICITUD] Buscar productos por rango de fecha de actualizacion: {} - {}", fechaInicio, fechaFin);
+
+        List<ProductoResponseDTO> productosFecha = productoService.obtenerProductoPorFechaActualizacion(fechaInicio, fechaFin);
+
+        if (productosFecha == null || productosFecha.isEmpty()) {
+            log.warn("⚠️ [RESPUESTA] No se encontraron productos en el rango de fecha de actualizacion.");
+            return ResponseEntity.noContent().build();
+        }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos por fecha de actualizacion.", productosFecha.size());
+
+        return ResponseEntity.ok(productosFecha);
+    }
+
     @PutMapping("/update")
     public ResponseEntity<ProductoResponseDTO> actualizarProducto(@Valid @RequestBody ProductoRequestDTO productoRequestDTO) {
         log.info("📥 [SOLICITUD] Actualizar producto con codigo: {}", productoRequestDTO.getCodigo());
