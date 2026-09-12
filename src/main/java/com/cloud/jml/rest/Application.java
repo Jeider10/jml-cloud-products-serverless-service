@@ -17,14 +17,17 @@ public class Application {
 
     public static final String MICRO_NAME = "M i c r o  -  P r o d u c t s";
 
-    static void main(String[] args) {
-
-        log.info("Hello, World!");
+    public static void main(String[] args) {
 
         SpringApplication app = new SpringApplication(Application.class);
-
         app.setBanner(new DynamicBanner(MICRO_NAME));
-
         app.run(args);
+
+        log.info("=======================================================");
+        log.info("  ✅  jml-cloud-products-serverless-service  ONLINE");
+        log.info("  📦  Servicio de gestion de productos e inventario");
+        log.info("  🌐  Puerto : 1084  →  http://localhost:1084");
+        log.info("  📊  Actuator: http://localhost:1084/actuator/health");
+        log.info("=======================================================");
     }
 }
