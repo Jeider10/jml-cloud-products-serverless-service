@@ -491,4 +491,39 @@ public class ProductoService {
 
         return productoResponseDTO;
     }
+
+    @Transactional
+    public ProductoResponseDTO devolverStock(String codigo, int cantidad) {
+        log.info("📦 [CONSULTA] Iniciando proceso para devolver {} unidades al producto con codigo {}", cantidad, codigo);
+
+        Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigo(codigo);
+
+        if (optionalProducto.isEmpty()) {
+            log.warn("❌ [NO ENCONTRADO] Producto no encontrado con codigo {} en la base.", codigo);
+            throw new ProductoNoEncontradoException(codigo);
+        }
+
+        ProductoEntity productoEntity = optionalProducto.get();
+        log.info("📦 [ENCONTRADO] Producto encontrado -> {} con codigo: {}", productoEntity.getNombre(), productoEntity.getCodigo());
+
+        // Sumar stock de vuelta
+        long nuevoStock = productoEntity.getCantidad() + cantidad;
+        productoEntity.setCantidad(nuevoStock);
+
+        log.info("📦 [STOCK] Stock devuelto correctamente para producto con codigo {}. Nuevo stock: {}", codigo, nuevoStock);
+
+        ProductoEntity actualizado = productoUtils.guardarProductoBD(productoEntity);
+
+        log.info("✅ [FINALIZADO] Producto con codigo {} guardado exitosamente con stock devuelto {}", codigo, actualizado.getCantidad());
+
+        log.info("📦 [MAPEO] Transformando entidad de producto a DTO. (devolverStock)");
+        ProductoResponseDTO productoResponseDTO = mapper.mapEntityToResponseDto(actualizado);
+        log.info("📦 [MAPEO] Producto mapeado a DTO. codigo: {}, cantidad: {}",
+                productoEntity.getCodigo(), productoEntity.getCantidad());
+
+        log.info("✅ [FINALIZADO] Devolucion de stock completada con codigo: {} y cantidad: {}",
+                productoResponseDTO.getCodigo(), productoResponseDTO.getCantidad());
+
+        return productoResponseDTO;
+    }
 }

@@ -319,6 +319,25 @@ public class ProductoController {
         return ResponseEntity.ok(productoResponseDTO);
     }
 
+    @PutMapping("/devolver-stock/{codigo}")
+    public ResponseEntity<ProductoResponseDTO> devolverStock(
+            @PathVariable String codigo,
+            @RequestParam int cantidad) {
+
+        log.info("📥 [SOLICITUD] [📦 STOCK] Devolver {} unidades al producto con codigo: {}", cantidad, codigo);
+
+        ProductoResponseDTO productoResponseDTO = productoService.devolverStock(codigo, cantidad);
+
+        if (productoResponseDTO == null || productoResponseDTO.getCodigo() == null) {
+            log.warn("⚠️ [RESPUESTA] No se pudo devolver stock al producto con codigo: {}", codigo);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        log.info("📤 [RESPUESTA] [📦 STOCK] Stock devuelto correctamente para el producto con codigo: {}", productoResponseDTO.getCodigo());
+
+        return ResponseEntity.ok(productoResponseDTO);
+    }
+
     @DeleteMapping("/delete")
     public ResponseEntity<Void> eliminarProducto(@RequestParam("codigo") String codigo) {
         log.info("📥 [SOLICITUD] Eliminar producto con codigo: {}", codigo);
