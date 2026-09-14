@@ -329,6 +329,28 @@ public class ProductoService {
     }
 
     @Transactional(readOnly = true)
+    public List<ProductoResponseDTO> obtenerProductoPorCreadoPor(ProductoRequestDTO productoRequestDTO) {
+        log.info("🔍 [CONSULTA] Iniciando busqueda de producto por creadoPor: {}", productoRequestDTO.getCreadoPor());
+
+        List<ProductoEntity> productoEntity = productoRepository.findByCreadoPorContainingIgnoreCase(productoRequestDTO.getCreadoPor());
+
+        if (productoEntity.isEmpty()) {
+            log.warn("❌ [RESULTADO] No se encontraron productos con creadoPor: {}", productoRequestDTO.getCreadoPor());
+            return List.of();
+        }
+
+        log.info("📦 [MAPEO] Transformando {} entidades de productos a DTOs (creadoPor: {})", productoEntity.size(), productoRequestDTO.getCreadoPor());
+
+        List<ProductoResponseDTO> productosResponse = productoEntity.stream()
+                .map(mapper::mapEntityToResponseDto)
+                .toList();
+
+        log.info("✅ [FINALIZADO] Productos encontrados con creadoPor: {}. Total: {}", productoRequestDTO.getCreadoPor(), productosResponse.size());
+
+        return productosResponse;
+    }
+
+    @Transactional(readOnly = true)
     public List<ProductoResponseDTO> obtenerProductoPorProveedorName(ProductoRequestDTO productoRequestDTO) {
         log.info("🔍 [CONSULTA] Iniciando busqueda de producto por proveedorName: {}", productoRequestDTO.getProveedorName());
 

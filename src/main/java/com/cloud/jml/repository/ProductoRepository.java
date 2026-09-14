@@ -33,4 +33,6 @@ public interface ProductoRepository extends JpaRepository<ProductoEntity, String
     List<ProductoEntity> findByProveedorId(Long proveedorId);
 
     List<ProductoEntity> findByProveedorNameContainingIgnoreCase(String proveedorName);
+
+    List<ProductoEntity> findByCreadoPorContainingIgnoreCase(String creadoPor);
 }

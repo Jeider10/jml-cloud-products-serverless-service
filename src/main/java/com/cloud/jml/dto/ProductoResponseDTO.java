@@ -23,6 +23,7 @@ public class ProductoResponseDTO {
     private BigDecimal precio;
     private Long proveedorId;
     private String proveedorName;
+    private String creadoPor;
     private String fechaCreacion;
     private String fechaActualizacion;
 }

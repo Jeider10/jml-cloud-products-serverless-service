@@ -50,4 +50,7 @@ public class ProductoEntity {
 
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
+
+    @Column(name = "creado_por", length = 150)
+    private String creadoPor;
 }

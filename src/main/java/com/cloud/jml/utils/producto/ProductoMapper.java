@@ -34,6 +34,7 @@ public class ProductoMapper {
         productoEntity.setPrecio(productoRequestDTO.getPrecio());
         productoEntity.setProveedorId(productoRequestDTO.getProveedorId());
         productoEntity.setProveedorName(productoRequestDTO.getProveedorName());
+        productoEntity.setCreadoPor(productoRequestDTO.getCreadoPor());
         productoEntity.setFechaCreacion(LocalDateTime.now());
 
         log.info("✅ [MAPEO] Mapeo completado DTO → Entity para producto: nombre={}", productoRequestDTO.getNombre());
@@ -56,6 +57,7 @@ public class ProductoMapper {
         productoResponseDTO.setPrecio(productoEntity.getPrecio());
         productoResponseDTO.setProveedorId(productoEntity.getProveedorId());
         productoResponseDTO.setProveedorName(productoEntity.getProveedorName());
+        productoResponseDTO.setCreadoPor(productoEntity.getCreadoPor());
 
         // 🕓 Formateo de fechas
         productoFormatearFecha.asignarFechasFormateadas(productoEntity, productoResponseDTO);

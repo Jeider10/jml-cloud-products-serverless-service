@@ -227,6 +227,25 @@ public class ProductoController {
         return ResponseEntity.ok(productosProveedorId);
     }
 
+    @GetMapping("/creadoPor")
+    public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorCreadoPor(@RequestParam("creadoPor") String creadoPor) {
+        log.info("📥 [SOLICITUD] Buscar productos por creadoPor: {}", creadoPor);
+
+        ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
+        productoRequestDTO.setCreadoPor(creadoPor);
+
+        List<ProductoResponseDTO> productosCreadoPor = productoService.obtenerProductoPorCreadoPor(productoRequestDTO);
+
+        if (productosCreadoPor == null || productosCreadoPor.isEmpty()) {
+            log.warn("⚠️ [RESPUESTA] No se encontraron productos con creadoPor: {}", creadoPor);
+            return ResponseEntity.noContent().build();
+        }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos con creadoPor: {}", productosCreadoPor.size(), creadoPor);
+
+        return ResponseEntity.ok(productosCreadoPor);
+    }
+
     @GetMapping("/proveedorName")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorProveedorName(@RequestParam("proveedorName") String proveedorName) {
         log.info("📥 [SOLICITUD] Buscar productos por proveedorName: {}", proveedorName);
