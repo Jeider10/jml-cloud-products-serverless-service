@@ -1,5 +1,6 @@
 package com.cloud.jml.utils.producto;
 
+import com.cloud.jml.dto.ProductoPapeleraResponseDTO;
 import com.cloud.jml.dto.ProductoRequestDTO;
 import com.cloud.jml.dto.ProductoResponseDTO;
 import com.cloud.jml.model.ProductoEntity;
@@ -36,6 +37,7 @@ public class ProductoMapper {
         productoEntity.setProveedorName(productoRequestDTO.getProveedorName());
         productoEntity.setCreadoPor(productoRequestDTO.getCreadoPor());
         productoEntity.setFechaCreacion(LocalDateTime.now());
+        productoEntity.setEliminado(false);
 
         log.info("✅ [MAPEO] Mapeo completado DTO → Entity para producto: nombre={}", productoRequestDTO.getNombre());
 
@@ -65,6 +67,29 @@ public class ProductoMapper {
         log.info("✅ [MAPEO] Mapeo completado Entity → DTO para producto: nombre={}", productoEntity.getNombre());
 
         return productoResponseDTO;
+    }
+
+    public ProductoPapeleraResponseDTO mapEntityToPapeleraDto(ProductoEntity productoEntity) {
+        log.info("📦 [MAPEO] Iniciando mapeo Entity → PapeleraDTO para producto: {}", productoEntity.getCodigo());
+
+        ProductoPapeleraResponseDTO dto = new ProductoPapeleraResponseDTO();
+
+        dto.setCodigo(productoEntity.getCodigo());
+        dto.setNombre(productoEntity.getNombre());
+        dto.setDescripcion(productoEntity.getDescripcion());
+        dto.setMarca(productoEntity.getMarca());
+        dto.setCantidad(productoEntity.getCantidad());
+        dto.setPrecio(productoEntity.getPrecio());
+        dto.setProveedorName(productoEntity.getProveedorName());
+        dto.setCreadoPor(productoEntity.getCreadoPor());
+        dto.setFechaCreacion(productoFormatearFecha.formatearFecha(productoEntity.getFechaCreacion()));
+        dto.setFechaEliminacion(productoFormatearFecha.formatearFecha(productoEntity.getFechaEliminacion()));
+        dto.setEliminadoPorId(productoEntity.getEliminadoPorId());
+        dto.setEliminadoPorNombre(productoEntity.getEliminadoPorNombre());
+
+        log.info("✅ [MAPEO] Mapeo papelera completado para producto: {}", dto.getCodigo());
+
+        return dto;
     }
 
     public void actualizarDatosProductoExistente(ProductoRequestDTO productoRequestDTO, ProductoEntity productoEntity) {

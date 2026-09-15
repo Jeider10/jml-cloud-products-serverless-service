@@ -29,8 +29,8 @@ public class ProductoUtils {
     }
 
     public ProductoEntity validarExistenciaProducto(ProductoRequestDTO productoRequestDTO) {
-        log.info("🔍 [SOLICITUD] Validando existencia de producto: codigo={}", productoRequestDTO.getCodigo());
-        Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigo(productoRequestDTO.getCodigo());
+        log.info("🔍 [SOLICITUD] Validando existencia de producto activo: codigo={}", productoRequestDTO.getCodigo());
+        Optional<ProductoEntity> optionalProducto = productoRepository.findByCodigoAndEliminadoFalse(productoRequestDTO.getCodigo());
 
         if (optionalProducto.isPresent()) {
             ProductoEntity productoEntity = optionalProducto.get();
@@ -49,12 +49,13 @@ public class ProductoUtils {
             log.error("⚠️ [ERROR] La fecha de inicio recibida es nula o vacia");
             throw new IllegalArgumentException("La fecha de inicio es obligatoria");
         }
+
         try {
             LocalDateTime res = LocalDateTime.parse(fecha, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             log.info("✅ [PARSEADO] Fecha inicio procesada (Formato Completo): {}", res);
             return res;
         } catch (DateTimeParseException e) {
-            log.debug("📅 [FECHA] Formato 'yyyy-MM-dd HH:mm:ss' no aplica para '{}', intentando siguiente formato. Detalle: {}", fecha, e.getMessage());
+            log.debug("📅 Formato 'yyyy-MM-dd HH:mm:ss' no aplica para '{}'. Detalle: {}", fecha, e.getMessage());
         }
 
         try {
@@ -62,7 +63,7 @@ public class ProductoUtils {
             log.info("✅ [PARSEADO] Fecha inicio procesada (ISO): {}", res);
             return res;
         } catch (DateTimeParseException e) {
-            log.debug("📅 [FECHA] Formato ISO DateTime no aplica para '{}', intentando siguiente formato. Detalle: {}", fecha, e.getMessage());
+            log.debug("📅 Formato ISO DateTime no aplica para '{}'. Detalle: {}", fecha, e.getMessage());
         }
 
         try {
@@ -83,12 +84,13 @@ public class ProductoUtils {
             log.error("⚠️ [ERROR] La fecha de fin recibida es nula o vacia");
             throw new IllegalArgumentException("La fecha de fin es obligatoria");
         }
+
         try {
             LocalDateTime res = LocalDateTime.parse(fecha, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             log.info("✅ [PARSEADO] Fecha fin procesada (Formato Completo): {}", res);
             return res;
         } catch (DateTimeParseException e) {
-            log.debug("📅 [FECHA] Formato 'yyyy-MM-dd HH:mm:ss' no aplica para '{}', intentando siguiente formato. Detalle: {}", fecha, e.getMessage());
+            log.debug("📅 Formato 'yyyy-MM-dd HH:mm:ss' no aplica para '{}'. Detalle: {}", fecha, e.getMessage());
         }
 
         try {
@@ -96,7 +98,7 @@ public class ProductoUtils {
             log.info("✅ [PARSEADO] Fecha fin procesada (ISO): {}", res);
             return res;
         } catch (DateTimeParseException e) {
-            log.debug("📅 [FECHA] Formato ISO DateTime no aplica para '{}', intentando siguiente formato. Detalle: {}", fecha, e.getMessage());
+            log.debug("📅 Formato ISO DateTime no aplica para '{}'. Detalle: {}", fecha, e.getMessage());
         }
 
         try {

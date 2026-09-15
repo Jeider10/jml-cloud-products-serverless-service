@@ -10,29 +10,40 @@ import java.util.Optional;
 
 public interface ProductoRepository extends JpaRepository<ProductoEntity, String> {
 
-    List<ProductoEntity> findByFechaCreacionBetween(LocalDateTime inicio, LocalDateTime fin);
+    // ─── Activos (eliminado = false) ─────────────────────────────────────────
+    Optional<ProductoEntity> findByCodigoAndEliminadoFalse(String codigo);
 
-    List<ProductoEntity> findByFechaActualizacionBetween(LocalDateTime inicio, LocalDateTime fin);
+    List<ProductoEntity> findAllByEliminadoFalse();
 
+    List<ProductoEntity> findByNombreContainingIgnoreCaseAndEliminadoFalse(String nombre);
+
+    List<ProductoEntity> findByReferenciaContainingIgnoreCaseAndEliminadoFalse(String referencia);
+
+    List<ProductoEntity> findByDescripcionContainingIgnoreCaseAndEliminadoFalse(String descripcion);
+
+    List<ProductoEntity> findByMarcaContainingIgnoreCaseAndEliminadoFalse(String marca);
+
+    List<ProductoEntity> findByUnidadMedidaContainingIgnoreCaseAndEliminadoFalse(String unidadMedida);
+
+    List<ProductoEntity> findByCantidadAndEliminadoFalse(Long cantidad);
+
+    List<ProductoEntity> findByPrecioAndEliminadoFalse(BigDecimal precio);
+
+    List<ProductoEntity> findByProveedorIdAndEliminadoFalse(Long proveedorId);
+
+    List<ProductoEntity> findByProveedorNameContainingIgnoreCaseAndEliminadoFalse(String proveedorName);
+
+    List<ProductoEntity> findByCreadoPorContainingIgnoreCaseAndEliminadoFalse(String creadoPor);
+
+    List<ProductoEntity> findByFechaCreacionBetweenAndEliminadoFalse(LocalDateTime inicio, LocalDateTime fin);
+
+    List<ProductoEntity> findByFechaActualizacionBetweenAndEliminadoFalse(LocalDateTime inicio, LocalDateTime fin);
+
+    // ─── Papelera (eliminado = true) ─────────────────────────────────────────
+    List<ProductoEntity> findAllByEliminadoTrue();
+
+    Optional<ProductoEntity> findByCodigoAndEliminadoTrue(String codigo);
+
+    // ─── Stock: se busca sin filtro de eliminado para consistencia ────────────
     Optional<ProductoEntity> findByCodigo(String codigo);
-
-    List<ProductoEntity> findByNombreContainingIgnoreCase(String nombre);
-
-    List<ProductoEntity> findByReferenciaContainingIgnoreCase(String referencia);
-
-    List<ProductoEntity> findByDescripcionContainingIgnoreCase(String descripcion);
-
-    List<ProductoEntity> findByMarcaContainingIgnoreCase(String marca);
-
-    List<ProductoEntity> findByUnidadMedidaContainingIgnoreCase(String unidadMedida);
-
-    List<ProductoEntity> findByCantidad(Long cantidad);
-
-    List<ProductoEntity> findByPrecio(BigDecimal precio);
-
-    List<ProductoEntity> findByProveedorId(Long proveedorId);
-
-    List<ProductoEntity> findByProveedorNameContainingIgnoreCase(String proveedorName);
-
-    List<ProductoEntity> findByCreadoPorContainingIgnoreCase(String creadoPor);
 }

@@ -1,5 +1,6 @@
 package com.cloud.jml.controller;
 
+import com.cloud.jml.dto.ProductoPapeleraResponseDTO;
 import com.cloud.jml.dto.ProductoRequestDTO;
 import com.cloud.jml.dto.ProductoResponseDTO;
 import com.cloud.jml.service.ProductoService;
@@ -24,350 +25,308 @@ public class ProductoController {
         log.info("🔥 ProductoController inicializado correctamente.");
     }
 
+    // ─── Listar activos ───────────────────────────────────────────────────────
     @GetMapping("/list/all")
     public ResponseEntity<List<ProductoResponseDTO>> listarProductos() {
-        log.info("📥 [SOLICITUD] Listar todos los productos.");
+        log.info("📥 [SOLICITUD] Listar todos los productos activos");
 
         List<ProductoResponseDTO> productos = productoService.listarProductos();
 
-        if (productos == null || productos.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos registrados.");
+        if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos.", productos.size());
+        log.info("📤 [RESPUESTA] Se retornan {} productos", productos.size());
 
         return ResponseEntity.ok(productos);
     }
 
+    // ─── Registrar ────────────────────────────────────────────────────────────
     @PostMapping("/register")
     public ResponseEntity<ProductoResponseDTO> crearProducto(@Valid @RequestBody ProductoRequestDTO productoRequestDTO) {
         log.info("📥 [SOLICITUD] Crear producto: {}", productoRequestDTO.getNombre());
 
-        ProductoResponseDTO crearProductoResponse = productoService.crearProducto(productoRequestDTO);
+        ProductoResponseDTO response = productoService.crearProducto(productoRequestDTO);
 
-        if (crearProductoResponse == null || crearProductoResponse.getCodigo() == null) {
-            log.warn("⚠️ [RESPUESTA] No se pudo crear el producto: {}", productoRequestDTO.getNombre());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        log.info("📤 [RESPUESTA] Producto creado: {} (codigo: {})", response.getNombre(), response.getCodigo());
 
-        log.info("📤 [RESPUESTA] Producto creado exitosamente: {} (codigo: {}).", crearProductoResponse.getNombre(), crearProductoResponse.getCodigo());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(crearProductoResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // ─── Buscar por código ────────────────────────────────────────────────────
     @GetMapping("/codigo")
     public ResponseEntity<ProductoResponseDTO> obtenerProductoPorCodigo(@RequestParam("codigo") String codigo) {
         log.info("📥 [SOLICITUD] Buscar producto por codigo: {}", codigo);
 
-        ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
-        productoRequestDTO.setCodigo(codigo);
+        ProductoResponseDTO producto = productoService.obtenerProductoPorCodigo(codigo);
 
-        ProductoResponseDTO productoCodigo = productoService.obtenerProductoPorCodigo(productoRequestDTO);
+        log.info("📤 [RESPUESTA] Producto encontrado: {}", codigo);
 
-        if (productoCodigo == null) {
-            log.warn("⚠️ [RESPUESTA] Producto no encontrado con codigo: {}", codigo);
-            return ResponseEntity.noContent().build();
-        }
-
-        log.info("📤 [RESPUESTA] Producto encontrado: {} (codigo: {}).", productoCodigo.getNombre(), productoCodigo.getCodigo());
-
-        return ResponseEntity.ok(productoCodigo);
+        return ResponseEntity.ok(producto);
     }
 
+    // ─── Buscar por nombre ────────────────────────────────────────────────────
     @GetMapping("/nombre")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorNombre(@RequestParam("nombre") String nombre) {
-        log.info("📥 [SOLICITUD] Buscar productos por nombre: {}", nombre);
+        log.info("📥 [SOLICITUD] Buscar producto por nombre: {}", nombre);
 
-        ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
-        productoRequestDTO.setNombre(nombre);
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorNombre(nombre);
 
-        List<ProductoResponseDTO> productosNombre = productoService.obtenerProductoPorNombre(productoRequestDTO);
-
-        if (productosNombre == null || productosNombre.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos con nombre: {}", nombre);
+        if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos con nombre: {}", productosNombre.size(), nombre);
-
-        return ResponseEntity.ok(productosNombre);
+        return ResponseEntity.ok(productos);
     }
 
+    // ─── Buscar por referencia ────────────────────────────────────────────────
     @GetMapping("/referencia")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorReferencia(@RequestParam("referencia") String referencia) {
-        log.info("📥 [SOLICITUD] Buscar productos por referencia: {}", referencia);
+        log.info("📥 [SOLICITUD] Buscar producto por referencia: {}", referencia);
 
-        ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
-        productoRequestDTO.setReferencia(referencia);
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorReferencia(referencia);
 
-        List<ProductoResponseDTO> productosReferencia = productoService.obtenerProductoPorReferencia(productoRequestDTO);
-
-        if (productosReferencia == null || productosReferencia.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos con referencia: {}", referencia);
+        if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos con referencia: {}", productosReferencia.size(), referencia);
-
-        return ResponseEntity.ok(productosReferencia);
+        return ResponseEntity.ok(productos);
     }
 
+    // ─── Buscar por descripción ───────────────────────────────────────────────
     @GetMapping("/descripcion")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorDescripcion(@RequestParam("descripcion") String descripcion) {
-        log.info("📥 [SOLICITUD] Buscar productos por descripcion: {}", descripcion);
+        log.info("📥 [SOLICITUD] Buscar producto por descripcion: {}", descripcion);
 
-        ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
-        productoRequestDTO.setDescripcion(descripcion);
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorDescripcion(descripcion);
 
-        List<ProductoResponseDTO> productosDescripcion = productoService.obtenerProductoPorDescripcion(productoRequestDTO);
-
-        if (productosDescripcion == null || productosDescripcion.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos con descripcion: {}", descripcion);
+        if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos con descripcion: {}", productosDescripcion.size(), descripcion);
-
-        return ResponseEntity.ok(productosDescripcion);
+        return ResponseEntity.ok(productos);
     }
 
+    // ─── Buscar por marca ─────────────────────────────────────────────────────
     @GetMapping("/marca")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorMarca(@RequestParam("marca") String marca) {
-        log.info("📥 [SOLICITUD] Buscar productos por marca: {}", marca);
+        log.info("📥 [SOLICITUD] Buscar producto por marca: {}", marca);
 
-        ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
-        productoRequestDTO.setMarca(marca);
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorMarca(marca);
 
-        List<ProductoResponseDTO> productosMarca = productoService.obtenerProductoPorMarca(productoRequestDTO);
-
-        if (productosMarca == null || productosMarca.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos con marca: {}", marca);
+        if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos con marca: {}", productosMarca.size(), marca);
-
-        return ResponseEntity.ok(productosMarca);
+        return ResponseEntity.ok(productos);
     }
 
+    // ─── Buscar por unidad de medida ──────────────────────────────────────────
     @GetMapping("/unidadMedida")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorUnidadDeMedida(@RequestParam("unidadMedida") String unidadMedida) {
-        log.info("📥 [SOLICITUD] Buscar productos por unidad de medida: {}", unidadMedida);
+        log.info("📥 [SOLICITUD] Buscar producto por unidadMedida: {}", unidadMedida);
 
-        ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
-        productoRequestDTO.setUnidadMedida(unidadMedida);
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorUnidadDeMedida(unidadMedida);
 
-        List<ProductoResponseDTO> productosUnidadDeMedida = productoService.obtenerProductoPorUnidadDeMedida(productoRequestDTO);
-
-        if (productosUnidadDeMedida == null || productosUnidadDeMedida.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos con unidad de medida: {}", unidadMedida);
+        if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos con unidad de medida: {}", productosUnidadDeMedida.size(), unidadMedida);
-
-        return ResponseEntity.ok(productosUnidadDeMedida);
+        return ResponseEntity.ok(productos);
     }
 
+    // ─── Buscar por cantidad ──────────────────────────────────────────────────
     @GetMapping("/cantidad")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorCantidad(@RequestParam("cantidad") Long cantidad) {
-        log.info("📥 [SOLICITUD] Buscar productos por cantidad: {}", cantidad);
+        log.info("📥 [SOLICITUD] Buscar producto por cantidad: {}", cantidad);
 
-        ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
-        productoRequestDTO.setCantidad(cantidad);
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorCantidad(cantidad);
 
-        List<ProductoResponseDTO> productosCantidad = productoService.obtenerProductoPorCantidad(productoRequestDTO);
-
-        if (productosCantidad == null || productosCantidad.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos con cantidad: {}", cantidad);
+        if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos con cantidad: {}", productosCantidad.size(), cantidad);
-
-        return ResponseEntity.ok(productosCantidad);
+        return ResponseEntity.ok(productos);
     }
 
+    // ─── Buscar por precio ────────────────────────────────────────────────────
     @GetMapping("/precio")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorPrecio(@RequestParam("precio") BigDecimal precio) {
-        log.info("📥 [SOLICITUD] Buscar productos por precio: {}", precio);
+        log.info("📥 [SOLICITUD] Buscar producto por precio: {}", precio);
 
-        ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
-        productoRequestDTO.setPrecio(precio);
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorPrecio(precio);
 
-        List<ProductoResponseDTO> productosPrecio = productoService.obtenerProductoPorPrecio(productoRequestDTO);
-
-        if (productosPrecio == null || productosPrecio.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos con precio: {}", precio);
+        if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos con precio: {}", productosPrecio.size(), precio);
-
-        return ResponseEntity.ok(productosPrecio);
+        return ResponseEntity.ok(productos);
     }
 
+    // ─── Buscar por proveedorId ───────────────────────────────────────────────
     @GetMapping("/proveedorId")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorProveedorId(@RequestParam("proveedorId") Long proveedorId) {
-        log.info("📥 [SOLICITUD] Buscar productos por proveedorId: {}", proveedorId);
+        log.info("📥 [SOLICITUD] Buscar producto por proveedorId: {}", proveedorId);
 
-        ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
-        productoRequestDTO.setProveedorId(proveedorId);
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorProveedorId(proveedorId);
 
-        List<ProductoResponseDTO> productosProveedorId = productoService.obtenerProductoPorProveedorId(productoRequestDTO);
-
-        if (productosProveedorId == null || productosProveedorId.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos con proveedorId: {}", proveedorId);
+        if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos con proveedorId: {}", productosProveedorId.size(), proveedorId);
-
-        return ResponseEntity.ok(productosProveedorId);
+        return ResponseEntity.ok(productos);
     }
 
-    @GetMapping("/creadoPor")
-    public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorCreadoPor(@RequestParam("creadoPor") String creadoPor) {
-        log.info("📥 [SOLICITUD] Buscar productos por creadoPor: {}", creadoPor);
-
-        ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
-        productoRequestDTO.setCreadoPor(creadoPor);
-
-        List<ProductoResponseDTO> productosCreadoPor = productoService.obtenerProductoPorCreadoPor(productoRequestDTO);
-
-        if (productosCreadoPor == null || productosCreadoPor.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos con creadoPor: {}", creadoPor);
-            return ResponseEntity.noContent().build();
-        }
-
-        log.info("📤 [RESPUESTA] Se retornan {} productos con creadoPor: {}", productosCreadoPor.size(), creadoPor);
-
-        return ResponseEntity.ok(productosCreadoPor);
-    }
-
+    // ─── Buscar por proveedorName ─────────────────────────────────────────────
     @GetMapping("/proveedorName")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorProveedorName(@RequestParam("proveedorName") String proveedorName) {
-        log.info("📥 [SOLICITUD] Buscar productos por proveedorName: {}", proveedorName);
+        log.info("📥 [SOLICITUD] Buscar producto por proveedorName: {}", proveedorName);
 
-        ProductoRequestDTO productoRequestDTO = new ProductoRequestDTO();
-        productoRequestDTO.setProveedorName(proveedorName);
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorProveedorName(proveedorName);
 
-        List<ProductoResponseDTO> productosProveedorName = productoService.obtenerProductoPorProveedorName(productoRequestDTO);
-
-        if (productosProveedorName == null || productosProveedorName.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos con proveedorName: {}", proveedorName);
+        if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos con proveedorName: {}", productosProveedorName.size(), proveedorName);
-
-        return ResponseEntity.ok(productosProveedorName);
+        return ResponseEntity.ok(productos);
     }
 
+    // ─── Buscar por creadoPor ─────────────────────────────────────────────────
+    @GetMapping("/creadoPor")
+    public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorCreadoPor(@RequestParam("creadoPor") String creadoPor) {
+        log.info("📥 [SOLICITUD] Buscar producto por creadoPor: {}", creadoPor);
+
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorCreadoPor(creadoPor);
+
+        if (productos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(productos);
+    }
+
+    // ─── Buscar por fecha de creación ─────────────────────────────────────────
     @GetMapping("/fechaCreacion")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorFechaCreacion(
             @RequestParam("fechaInicio") String fechaInicio,
             @RequestParam("fechaFin") String fechaFin) {
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorFechaCreacion(fechaInicio, fechaFin);
+        log.info("📥 [SOLICITUD] Buscar producto por fechaCreacion: fechaInicio: {}, fechaFin: {}", fechaInicio, fechaFin);
 
-        log.info("📥 [SOLICITUD] Buscar productos por rango de fecha de creacion: {} - {}", fechaInicio, fechaFin);
-
-        List<ProductoResponseDTO> productosFecha = productoService.obtenerProductoPorFechaCreacion(fechaInicio, fechaFin);
-
-        if (productosFecha == null || productosFecha.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos en el rango de fechas: {} - {}", fechaInicio, fechaFin);
+        if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos en el rango de fechas.", productosFecha.size());
-
-        return ResponseEntity.ok(productosFecha);
+        return ResponseEntity.ok(productos);
     }
 
+    // ─── Buscar por fecha de actualización ───────────────────────────────────
     @GetMapping("/fechaActualizacion")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorFechaActualizacion(
             @RequestParam("fechaInicio") String fechaInicio,
             @RequestParam("fechaFin") String fechaFin) {
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorFechaActualizacion(fechaInicio, fechaFin);
+        log.info("📥 [SOLICITUD] Buscar producto por de fechaActualizacion: fechaInicio: {}, fechaFin: {}", fechaInicio, fechaFin);
 
-        log.info("📥 [SOLICITUD] Buscar productos por rango de fecha de actualizacion: {} - {}", fechaInicio, fechaFin);
-
-        List<ProductoResponseDTO> productosFecha = productoService.obtenerProductoPorFechaActualizacion(fechaInicio, fechaFin);
-
-        if (productosFecha == null || productosFecha.isEmpty()) {
-            log.warn("⚠️ [RESPUESTA] No se encontraron productos en el rango de fecha de actualizacion.");
+        if (productos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        log.info("📤 [RESPUESTA] Se retornan {} productos por fecha de actualizacion.", productosFecha.size());
-
-        return ResponseEntity.ok(productosFecha);
+        return ResponseEntity.ok(productos);
     }
 
+    // ─── Actualizar ───────────────────────────────────────────────────────────
     @PutMapping("/update")
     public ResponseEntity<ProductoResponseDTO> actualizarProducto(@Valid @RequestBody ProductoRequestDTO productoRequestDTO) {
         log.info("📥 [SOLICITUD] Actualizar producto con codigo: {}", productoRequestDTO.getCodigo());
 
-        ProductoResponseDTO productoResponseDTO = productoService.actualizarProducto(productoRequestDTO);
+        ProductoResponseDTO response = productoService.actualizarProducto(productoRequestDTO);
 
-        if (productoResponseDTO == null || productoResponseDTO.getCodigo() == null) {
-            log.warn("⚠️ [RESPUESTA] No se pudo actualizar el producto con codigo: {}", productoRequestDTO.getCodigo());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        log.info("📤 [RESPUESTA] Producto actualizado: {}", response.getCodigo());
 
-        log.info("📤 [RESPUESTA] Producto actualizado correctamente: {} (codigo: {}).", productoResponseDTO.getNombre(), productoResponseDTO.getCodigo());
-
-        return ResponseEntity.ok(productoResponseDTO);
+        return ResponseEntity.ok(response);
     }
 
+    // ─── Soft delete (enviar a papelera) ──────────────────────────────────────
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> eliminarProducto(
+            @RequestParam("codigo") String codigo,
+            @RequestParam("eliminadoPorId") String eliminadoPorId,
+            @RequestParam("eliminadoPorNombre") String eliminadoPorNombre) {
+
+        log.info("📥 [SOLICITUD] Enviar a papelera producto con codigo: {}", codigo);
+
+        productoService.eliminarProducto(codigo, eliminadoPorId, eliminadoPorNombre);
+
+        log.info("📤 [RESPUESTA] Producto {} enviado a papelera por: {}", codigo, eliminadoPorNombre);
+
+        return ResponseEntity.ok().build();
+    }
+
+    // ─── Listar papelera ──────────────────────────────────────────────────────
+    @GetMapping("/trash")
+    public ResponseEntity<List<ProductoPapeleraResponseDTO>> listarPapelera() {
+        log.info("📥 [SOLICITUD] Listar productos en papelera");
+
+        List<ProductoPapeleraResponseDTO> papelera = productoService.listarPapelera();
+
+        if (papelera.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos en papelera", papelera.size());
+
+        return ResponseEntity.ok(papelera);
+    }
+
+    // ─── Restaurar desde papelera ─────────────────────────────────────────────
+    @PutMapping("/restore")
+    public ResponseEntity<ProductoResponseDTO> restaurarProducto(@RequestParam("codigo") String codigo) {
+        log.info("📥 [SOLICITUD] Restaurar producto con codigo: {}", codigo);
+
+        ProductoResponseDTO response = productoService.restaurarProducto(codigo);
+
+        log.info("📤 [RESPUESTA] Producto restaurado: {}", codigo);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // ─── Eliminar definitivamente ─────────────────────────────────────────────
+    @DeleteMapping("/permanent-delete")
+    public ResponseEntity<Void> eliminarDefinitivo(@RequestParam("codigo") String codigo) {
+        log.info("📥 [SOLICITUD] Eliminar definitivamente producto con codigo: {}", codigo);
+
+        productoService.eliminarDefinitivo(codigo);
+
+        log.info("📤 [RESPUESTA] Producto {} eliminado definitivamente", codigo);
+
+        return ResponseEntity.ok().build();
+    }
+
+    // ─── Stock ────────────────────────────────────────────────────────────────
     @PutMapping("/restar-stock/{codigo}")
     public ResponseEntity<ProductoResponseDTO> restarStock(
             @PathVariable String codigo,
             @RequestParam int cantidad) {
+        log.info("📥 [SOLICITUD] [STOCK] Restar {} unidades al producto con codigo: {}", cantidad, codigo);
 
-        log.info("📥 [SOLICITUD] [📦 STOCK] Restar {} unidades al producto con codigo: {}", cantidad, codigo);
+        ProductoResponseDTO response = productoService.restarStock(codigo, cantidad);
 
-        ProductoResponseDTO productoResponseDTO = productoService.restarStock(codigo, cantidad);
+        log.info("📤 [RESPUESTA] [STOCK] Stock actualizado para el producto con codigo: {}", response.getCodigo());
 
-        if (productoResponseDTO == null || productoResponseDTO.getCodigo() == null) {
-            log.warn("⚠️ [RESPUESTA] No se pudo restar stock al producto con codigo: {}", codigo);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-
-        log.info("📤 [RESPUESTA] [📦 STOCK] Stock actualizado correctamente para el producto con codigo: {}", productoResponseDTO.getCodigo());
-
-        return ResponseEntity.ok(productoResponseDTO);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/devolver-stock/{codigo}")
     public ResponseEntity<ProductoResponseDTO> devolverStock(
             @PathVariable String codigo,
             @RequestParam int cantidad) {
+        log.info("📥 [SOLICITUD] [STOCK] Devolver {} unidades al producto con codigo: {}", cantidad, codigo);
 
-        log.info("📥 [SOLICITUD] [📦 STOCK] Devolver {} unidades al producto con codigo: {}", cantidad, codigo);
+        ProductoResponseDTO response = productoService.devolverStock(codigo, cantidad);
 
-        ProductoResponseDTO productoResponseDTO = productoService.devolverStock(codigo, cantidad);
+        log.info("📤 [RESPUESTA] [STOCK] Stock devuelto para el producto con codigo: {}", response.getCodigo());
 
-        if (productoResponseDTO == null || productoResponseDTO.getCodigo() == null) {
-            log.warn("⚠️ [RESPUESTA] No se pudo devolver stock al producto con codigo: {}", codigo);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-
-        log.info("📤 [RESPUESTA] [📦 STOCK] Stock devuelto correctamente para el producto con codigo: {}", productoResponseDTO.getCodigo());
-
-        return ResponseEntity.ok(productoResponseDTO);
-    }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> eliminarProducto(@RequestParam("codigo") String codigo) {
-        log.info("📥 [SOLICITUD] Eliminar producto con codigo: {}", codigo);
-
-        ProductoRequestDTO request = new ProductoRequestDTO();
-        request.setCodigo(codigo);
-
-        productoService.eliminarProducto(request);
-
-        log.info("📤 [RESPUESTA] Producto eliminado correctamente con codigo: {}", codigo);
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(response);
     }
 }
