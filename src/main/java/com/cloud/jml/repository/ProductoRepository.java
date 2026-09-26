@@ -44,6 +44,10 @@ public interface ProductoRepository extends JpaRepository<ProductoEntity, String
 
     Optional<ProductoEntity> findByCodigoAndEliminadoTrue(String codigo);
 
+    List<ProductoEntity> findByFechaEliminacionBetweenAndEliminadoTrue(LocalDateTime inicio, LocalDateTime fin);
+
+    List<ProductoEntity> findByEliminadoPorIdContainingIgnoreCaseAndEliminadoTrue(String eliminadoPorId);
+
     // ─── Stock: se busca sin filtro de eliminado para consistencia ────────────
     Optional<ProductoEntity> findByCodigo(String codigo);
 }

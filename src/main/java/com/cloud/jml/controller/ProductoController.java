@@ -53,7 +53,7 @@ public class ProductoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // ─── Buscar por código ────────────────────────────────────────────────────
+    // ─── Buscar por codigo ────────────────────────────────────────────────────
     @GetMapping("/codigo")
     public ResponseEntity<ProductoResponseDTO> obtenerProductoPorCodigo(@RequestParam("codigo") String codigo) {
         log.info("📥 [SOLICITUD] Buscar producto por codigo: {}", codigo);
@@ -93,7 +93,7 @@ public class ProductoController {
         return ResponseEntity.ok(productos);
     }
 
-    // ─── Buscar por descripción ───────────────────────────────────────────────
+    // ─── Buscar por descripcion ───────────────────────────────────────────────
     @GetMapping("/descripcion")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorDescripcion(@RequestParam("descripcion") String descripcion) {
         log.info("📥 [SOLICITUD] Buscar producto por descripcion: {}", descripcion);
@@ -205,7 +205,7 @@ public class ProductoController {
         return ResponseEntity.ok(productos);
     }
 
-    // ─── Buscar por fecha de creación ─────────────────────────────────────────
+    // ─── Buscar por fecha de creacion ─────────────────────────────────────────
     @GetMapping("/fechaCreacion")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorFechaCreacion(
             @RequestParam("fechaInicio") String fechaInicio,
@@ -220,7 +220,7 @@ public class ProductoController {
         return ResponseEntity.ok(productos);
     }
 
-    // ─── Buscar por fecha de actualización ───────────────────────────────────
+    // ─── Buscar por fecha de actualizacion ───────────────────────────────────
     @GetMapping("/fechaActualizacion")
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorFechaActualizacion(
             @RequestParam("fechaInicio") String fechaInicio,
@@ -328,5 +328,34 @@ public class ProductoController {
         log.info("📤 [RESPUESTA] [STOCK] Stock devuelto para el producto con codigo: {}", response.getCodigo());
 
         return ResponseEntity.ok(response);
+    }
+
+    // ─── Filtrar papelera por fecha de eliminacion ────────────────────────────
+    @GetMapping("/trash/fecha")
+    public ResponseEntity<List<ProductoPapeleraResponseDTO>> listarPapeleraPorFecha(
+            @RequestParam("fechaInicio") String fechaInicio,
+            @RequestParam("fechaFin") String fechaFin) {
+
+        List<ProductoPapeleraResponseDTO> resultado = productoService.listarPapeleraPorFecha(fechaInicio, fechaFin);
+
+        if (resultado.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(resultado);
+    }
+
+    // ─── Filtrar papelera por quien elimino ───────────────────────────────────
+    @GetMapping("/trash/eliminadoPor")
+    public ResponseEntity<List<ProductoPapeleraResponseDTO>> listarPapeleraPorEliminadoPor(
+            @RequestParam("eliminadoPorId") String eliminadoPorId) {
+
+        List<ProductoPapeleraResponseDTO> resultado = productoService.listarPapeleraPorEliminadoPor(eliminadoPorId);
+
+        if (resultado.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(resultado);
     }
 }
