@@ -60,6 +60,7 @@ public class ProductoMapper {
         productoResponseDTO.setProveedorId(productoEntity.getProveedorId());
         productoResponseDTO.setProveedorName(productoEntity.getProveedorName());
         productoResponseDTO.setCreadoPor(productoEntity.getCreadoPor());
+        productoResponseDTO.setActualizadoPor(productoEntity.getActualizadoPor());
 
         // 🕓 Formateo de fechas
         productoFormatearFecha.asignarFechasFormateadas(productoEntity, productoResponseDTO);
@@ -104,6 +105,7 @@ public class ProductoMapper {
         productoEntity.setPrecio(productoRequestDTO.getPrecio());
         productoEntity.setProveedorId(productoRequestDTO.getProveedorId());
         productoEntity.setProveedorName(productoRequestDTO.getProveedorName());
+        productoEntity.setActualizadoPor(productoRequestDTO.getActualizadoPor());
 
         productoEntity.setFechaActualizacion(LocalDateTime.now());
 

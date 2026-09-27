@@ -54,6 +54,9 @@ public class ProductoEntity {
     @Column(name = "creado_por", length = 150)
     private String creadoPor;
 
+    @Column(name = "actualizado_por", length = 150)
+    private String actualizadoPor;
+
     // ─── Soft delete (papelera) ───────────────────────────────────────────────
     @Column(name = "eliminado", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean eliminado = false;

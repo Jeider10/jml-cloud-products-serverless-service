@@ -24,6 +24,7 @@ public class ProductoResponseDTO {
     private Long proveedorId;
     private String proveedorName;
     private String creadoPor;
+    private String actualizadoPor;
     private String fechaCreacion;
     private String fechaActualizacion;
 }
