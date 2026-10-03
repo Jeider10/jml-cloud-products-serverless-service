@@ -33,7 +33,8 @@ public class ProductoController {
         List<ProductoResponseDTO> productos = productoService.listarProductos();
 
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No hay productos activos — lista vacia");
+            return ResponseEntity.ok(List.of());
         }
 
         log.info("📤 [RESPUESTA] Se retornan {} productos", productos.size());
@@ -73,8 +74,11 @@ public class ProductoController {
         List<ProductoResponseDTO> productos = productoService.obtenerProductoPorNombre(nombre);
 
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No se encontraron productos con nombre: {} — lista vacia", nombre);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos con nombre: {}", productos.size(), nombre);
 
         return ResponseEntity.ok(productos);
     }
@@ -87,8 +91,11 @@ public class ProductoController {
         List<ProductoResponseDTO> productos = productoService.obtenerProductoPorReferencia(referencia);
 
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No se encontraron productos con referencia: {} — lista vacia", referencia);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos con referencia: {}", productos.size(), referencia);
 
         return ResponseEntity.ok(productos);
     }
@@ -101,8 +108,11 @@ public class ProductoController {
         List<ProductoResponseDTO> productos = productoService.obtenerProductoPorDescripcion(descripcion);
 
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No se encontraron productos con descripcion: {} — lista vacia", descripcion);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos con descripcion: {}", productos.size(), descripcion);
 
         return ResponseEntity.ok(productos);
     }
@@ -115,8 +125,11 @@ public class ProductoController {
         List<ProductoResponseDTO> productos = productoService.obtenerProductoPorMarca(marca);
 
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No se encontraron productos con marca: {} — lista vacia", marca);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos con marca: {}", productos.size(), marca);
 
         return ResponseEntity.ok(productos);
     }
@@ -129,8 +142,11 @@ public class ProductoController {
         List<ProductoResponseDTO> productos = productoService.obtenerProductoPorUnidadDeMedida(unidadMedida);
 
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No se encontraron productos con unidadMedida: {} — lista vacia", unidadMedida);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos con unidadMedida: {}", productos.size(), unidadMedida);
 
         return ResponseEntity.ok(productos);
     }
@@ -143,8 +159,11 @@ public class ProductoController {
         List<ProductoResponseDTO> productos = productoService.obtenerProductoPorCantidad(cantidad);
 
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No se encontraron productos con cantidad: {} — lista vacia", cantidad);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos con cantidad: {}", productos.size(), cantidad);
 
         return ResponseEntity.ok(productos);
     }
@@ -157,8 +176,11 @@ public class ProductoController {
         List<ProductoResponseDTO> productos = productoService.obtenerProductoPorPrecio(precio);
 
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No se encontraron productos con precio: {} — lista vacia", precio);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos con precio: {}", productos.size(), precio);
 
         return ResponseEntity.ok(productos);
     }
@@ -171,8 +193,11 @@ public class ProductoController {
         List<ProductoResponseDTO> productos = productoService.obtenerProductoPorProveedorId(proveedorId);
 
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No se encontraron productos con proveedorId: {} — lista vacia", proveedorId);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos con proveedorId: {}", productos.size(), proveedorId);
 
         return ResponseEntity.ok(productos);
     }
@@ -185,8 +210,11 @@ public class ProductoController {
         List<ProductoResponseDTO> productos = productoService.obtenerProductoPorProveedorName(proveedorName);
 
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No se encontraron productos con proveedorName: {} — lista vacia", proveedorName);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos con proveedorName: {}", productos.size(), proveedorName);
 
         return ResponseEntity.ok(productos);
     }
@@ -199,8 +227,11 @@ public class ProductoController {
         List<ProductoResponseDTO> productos = productoService.obtenerProductoPorCreadoPor(creadoPor);
 
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No se encontraron productos creados por: {} — lista vacia", creadoPor);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos creados por: {}", productos.size(), creadoPor);
 
         return ResponseEntity.ok(productos);
     }
@@ -210,12 +241,17 @@ public class ProductoController {
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorFechaCreacion(
             @RequestParam("fechaInicio") String fechaInicio,
             @RequestParam("fechaFin") String fechaFin) {
-        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorFechaCreacion(fechaInicio, fechaFin);
+
         log.info("📥 [SOLICITUD] Buscar producto por fechaCreacion: fechaInicio: {}, fechaFin: {}", fechaInicio, fechaFin);
 
+        List<ProductoResponseDTO> productos = productoService.obtenerProductoPorFechaCreacion(fechaInicio, fechaFin);
+
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No se encontraron productos en el rango {} - {} — lista vacia", fechaInicio, fechaFin);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos en el rango de fechas", productos.size());
 
         return ResponseEntity.ok(productos);
     }
@@ -225,12 +261,17 @@ public class ProductoController {
     public ResponseEntity<List<ProductoResponseDTO>> obtenerProductoPorFechaActualizacion(
             @RequestParam("fechaInicio") String fechaInicio,
             @RequestParam("fechaFin") String fechaFin) {
+
+        log.info("📥 [SOLICITUD] Buscar producto por fechaActualizacion: fechaInicio: {}, fechaFin: {}", fechaInicio, fechaFin);
+
         List<ProductoResponseDTO> productos = productoService.obtenerProductoPorFechaActualizacion(fechaInicio, fechaFin);
-        log.info("📥 [SOLICITUD] Buscar producto por de fechaActualizacion: fechaInicio: {}, fechaFin: {}", fechaInicio, fechaFin);
 
         if (productos.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No se encontraron productos en el rango {} - {} — lista vacia", fechaInicio, fechaFin);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos en el rango de fechas de actualizacion", productos.size());
 
         return ResponseEntity.ok(productos);
     }
@@ -271,7 +312,8 @@ public class ProductoController {
         List<ProductoPapeleraResponseDTO> papelera = productoService.listarPapelera();
 
         if (papelera.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No hay productos en papelera — lista vacia");
+            return ResponseEntity.ok(List.of());
         }
 
         log.info("📤 [RESPUESTA] Se retornan {} productos en papelera", papelera.size());
@@ -312,7 +354,7 @@ public class ProductoController {
 
         ProductoResponseDTO response = productoService.restarStock(codigo, cantidad);
 
-        log.info("📤 [RESPUESTA] [STOCK] Stock actualizado para el producto con codigo: {}", response.getCodigo());
+        log.info("📤 [RESPUESTA] [STOCK] Stock actualizado para producto: {} — nuevo stock: {}", response.getCodigo(), response.getCantidad());
 
         return ResponseEntity.ok(response);
     }
@@ -325,7 +367,7 @@ public class ProductoController {
 
         ProductoResponseDTO response = productoService.devolverStock(codigo, cantidad);
 
-        log.info("📤 [RESPUESTA] [STOCK] Stock devuelto para el producto con codigo: {}", response.getCodigo());
+        log.info("📤 [RESPUESTA] [STOCK] Stock devuelto para producto: {} — nuevo stock: {}", response.getCodigo(), response.getCantidad());
 
         return ResponseEntity.ok(response);
     }
@@ -336,11 +378,16 @@ public class ProductoController {
             @RequestParam("fechaInicio") String fechaInicio,
             @RequestParam("fechaFin") String fechaFin) {
 
+        log.info("📥 [SOLICITUD] Filtrar papelera de productos por fecha: {} - {}", fechaInicio, fechaFin);
+
         List<ProductoPapeleraResponseDTO> resultado = productoService.listarPapeleraPorFecha(fechaInicio, fechaFin);
 
         if (resultado.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No hay productos en papelera en el rango {} - {} — lista vacia", fechaInicio, fechaFin);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos en papelera en el rango de fechas", resultado.size());
 
         return ResponseEntity.ok(resultado);
     }
@@ -350,11 +397,16 @@ public class ProductoController {
     public ResponseEntity<List<ProductoPapeleraResponseDTO>> listarPapeleraPorEliminadoPor(
             @RequestParam("eliminadoPorId") String eliminadoPorId) {
 
+        log.info("📥 [SOLICITUD] Filtrar papelera de productos por eliminadoPorId: {}", eliminadoPorId);
+
         List<ProductoPapeleraResponseDTO> resultado = productoService.listarPapeleraPorEliminadoPor(eliminadoPorId);
 
         if (resultado.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            log.info("📤 [RESPUESTA] No hay productos en papelera eliminados por: {} — lista vacia", eliminadoPorId);
+            return ResponseEntity.ok(List.of());
         }
+
+        log.info("📤 [RESPUESTA] Se retornan {} productos en papelera eliminados por: {}", resultado.size(), eliminadoPorId);
 
         return ResponseEntity.ok(resultado);
     }
