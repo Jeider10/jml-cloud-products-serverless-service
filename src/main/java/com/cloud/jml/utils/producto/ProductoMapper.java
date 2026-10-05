@@ -33,6 +33,7 @@ public class ProductoMapper {
         productoEntity.setUnidadMedida(productoRequestDTO.getUnidadMedida());
         productoEntity.setCantidad(productoRequestDTO.getCantidad());
         productoEntity.setPrecio(productoRequestDTO.getPrecio());
+        productoEntity.setPrecioCosto(productoRequestDTO.getPrecioCosto());
         productoEntity.setProveedorId(productoRequestDTO.getProveedorId());
         productoEntity.setProveedorName(productoRequestDTO.getProveedorName());
         productoEntity.setCreadoPor(productoRequestDTO.getCreadoPor());
@@ -57,6 +58,7 @@ public class ProductoMapper {
         productoResponseDTO.setUnidadMedida(productoEntity.getUnidadMedida());
         productoResponseDTO.setCantidad(productoEntity.getCantidad());
         productoResponseDTO.setPrecio(productoEntity.getPrecio());
+        productoResponseDTO.setPrecioCosto(productoEntity.getPrecioCosto());
         productoResponseDTO.setProveedorId(productoEntity.getProveedorId());
         productoResponseDTO.setProveedorName(productoEntity.getProveedorName());
         productoResponseDTO.setCreadoPor(productoEntity.getCreadoPor());
@@ -103,6 +105,7 @@ public class ProductoMapper {
         productoEntity.setUnidadMedida(productoRequestDTO.getUnidadMedida());
         productoEntity.setCantidad(productoRequestDTO.getCantidad());
         productoEntity.setPrecio(productoRequestDTO.getPrecio());
+        productoEntity.setPrecioCosto(productoRequestDTO.getPrecioCosto());
         productoEntity.setProveedorId(productoRequestDTO.getProveedorId());
         productoEntity.setProveedorName(productoRequestDTO.getProveedorName());
         productoEntity.setActualizadoPor(productoRequestDTO.getActualizadoPor());

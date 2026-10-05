@@ -21,6 +21,8 @@ public class ProductoResponseDTO {
     private String unidadMedida;
     private Long cantidad;
     private BigDecimal precio;
+    // Precio de costo — solo visible para el rol ADMIN en el frontend
+    private BigDecimal precioCosto;
     private Long proveedorId;
     private String proveedorName;
     private String creadoPor;

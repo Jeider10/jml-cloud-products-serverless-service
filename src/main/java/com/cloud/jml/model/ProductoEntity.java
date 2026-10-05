@@ -38,6 +38,10 @@ public class ProductoEntity {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal precio;
 
+    // Precio de costo/compra — base para calcular ganancia bruta. Opcional; null = no registrado
+    @Column(name = "precio_costo", precision = 15, scale = 2)
+    private BigDecimal precioCosto;
+
     // Proveedor es obligatorio — todo producto debe tener proveedor asignado
     @Column(nullable = false)
     private Long proveedorId;
