@@ -23,7 +23,7 @@ public class ProductoResponseDTO {
     private BigDecimal precio;
     // Precio de costo — solo visible para el rol ADMIN en el frontend
     private BigDecimal precioCosto;
-    private Long proveedorId;
+    private String proveedorId;
     private String proveedorName;
     private String creadoPor;
     private String actualizadoPor;

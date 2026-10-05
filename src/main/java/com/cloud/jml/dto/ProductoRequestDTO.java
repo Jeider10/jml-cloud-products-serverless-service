@@ -39,7 +39,7 @@ public class ProductoRequestDTO {
     private BigDecimal precio;
     // Precio de costo/compra — opcional. Si se registra permite calcular ganancia
     private BigDecimal precioCosto;
-    private Long proveedorId;
+    private String proveedorId;
 
     @Size(max = 100, message = "El campo 'proveedorName' no puede exceder 100 caracteres")
     private String proveedorName;

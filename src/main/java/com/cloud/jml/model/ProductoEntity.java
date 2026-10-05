@@ -44,7 +44,7 @@ public class ProductoEntity {
 
     // Proveedor es obligatorio — todo producto debe tener proveedor asignado
     @Column(nullable = false)
-    private Long proveedorId;
+    private String proveedorId;
 
     @Column(nullable = false)
     private String proveedorName;
