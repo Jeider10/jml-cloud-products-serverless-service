@@ -293,11 +293,13 @@ public class ProductoController {
     public ResponseEntity<Void> eliminarProducto(
             @RequestParam("codigo") String codigo,
             @RequestParam("eliminadoPorId") String eliminadoPorId,
-            @RequestParam("eliminadoPorNombre") String eliminadoPorNombre) {
+            @RequestParam("eliminadoPorNombre") String eliminadoPorNombre,
+            @RequestParam("eliminadoPorRol") String eliminadoPorRol,
+            @RequestParam(value = "motivo", required = false) String motivo) {
 
         log.info("📥 [SOLICITUD] Enviar a papelera producto con codigo: {}", codigo);
 
-        productoService.eliminarProducto(codigo, eliminadoPorId, eliminadoPorNombre);
+        productoService.eliminarProducto(codigo, eliminadoPorId, eliminadoPorNombre, eliminadoPorRol, motivo);
 
         log.info("📤 [RESPUESTA] Producto {} enviado a papelera por: {}", codigo, eliminadoPorNombre);
 

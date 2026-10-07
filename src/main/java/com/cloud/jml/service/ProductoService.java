@@ -271,7 +271,7 @@ public class ProductoService {
 
     // ─── Soft delete (a papelera) ─────────────────────────────────────────────
     @Transactional
-    public void eliminarProducto(String codigo, String eliminadoPorId, String eliminadoPorNombre) {
+    public void eliminarProducto(String codigo, String eliminadoPorId, String eliminadoPorNombre, String eliminadoPorRol, String motivo) {
         log.info("🔍 [SOLICITUD] Enviando a papelera producto con codigo: {}", codigo);
 
         ProductoEntity entidad = productoRepository.findByCodigoAndEliminadoFalse(codigo)
@@ -279,8 +279,11 @@ public class ProductoService {
 
         entidad.setEliminado(true);
         entidad.setFechaEliminacion(LocalDateTime.now());
+        entidad.setFechaExpiracion(LocalDateTime.now().plusMonths(2));
         entidad.setEliminadoPorId(eliminadoPorId);
         entidad.setEliminadoPorNombre(eliminadoPorNombre);
+        entidad.setEliminadoPorRol(eliminadoPorRol);
+        entidad.setMotivo(motivo != null ? motivo : "Sin motivo especificado");
 
         productoUtils.guardarProductoBD(entidad);
 
@@ -321,8 +324,11 @@ public class ProductoService {
 
         entidad.setEliminado(false);
         entidad.setFechaEliminacion(null);
+        entidad.setFechaExpiracion(null);
         entidad.setEliminadoPorId(null);
         entidad.setEliminadoPorNombre(null);
+        entidad.setEliminadoPorRol(null);
+        entidad.setMotivo(null);
         entidad.setFechaActualizacion(LocalDateTime.now());
 
         ProductoEntity restaurado = productoUtils.guardarProductoBD(entidad);

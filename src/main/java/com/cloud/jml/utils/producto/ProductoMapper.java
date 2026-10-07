@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Slf4j
 @Component // 🔹 Anotacion para indicar que es un componente de Spring
@@ -87,8 +88,15 @@ public class ProductoMapper {
         dto.setCreadoPor(productoEntity.getCreadoPor());
         dto.setFechaCreacion(productoFormatearFecha.formatearFecha(productoEntity.getFechaCreacion()));
         dto.setFechaEliminacion(productoFormatearFecha.formatearFecha(productoEntity.getFechaEliminacion()));
+        // Calcular fechaExpiracion y diasRestantes al vuelo (no se persisten en la entidad directamente)
+        if (productoEntity.getFechaExpiracion() != null) {
+            dto.setFechaExpiracion(productoFormatearFecha.formatearFecha(productoEntity.getFechaExpiracion()));
+            dto.setDiasRestantes(ChronoUnit.DAYS.between(LocalDateTime.now(), productoEntity.getFechaExpiracion()));
+        }
         dto.setEliminadoPorId(productoEntity.getEliminadoPorId());
         dto.setEliminadoPorNombre(productoEntity.getEliminadoPorNombre());
+        dto.setEliminadoPorRol(productoEntity.getEliminadoPorRol());
+        dto.setMotivo(productoEntity.getMotivo());
 
         log.info("✅ [MAPEO] Mapeo papelera completado para producto: {}", dto.getCodigo());
 
